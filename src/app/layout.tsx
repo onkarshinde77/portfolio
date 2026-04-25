@@ -41,6 +41,10 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Fira+Code:wght@300;400;500;600&display=swap"
+          rel="stylesheet"
+        />
       </head>
       {/* suppressHydrationWarning prevents false positives from browser
           extensions that inject attributes (Grammarly, LastPass, etc.) */}

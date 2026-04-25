@@ -94,7 +94,7 @@ async function upsertToPinecone(vectors: EmbeddingResult[]): Promise<void> {
   const batchSize = 50;
   for (let i = 0; i < vectors.length; i += batchSize) {
     const batch = vectors.slice(i, i + batchSize);
-    await index.upsert(batch);
+    await index.upsert({ records: batch });
     console.log(
       `  Upserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(vectors.length / batchSize)}`
     );

@@ -231,7 +231,7 @@ export function AboutSection() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "minmax(300px, 380px) 1fr",
+          gridTemplateColumns: "minmax(400px, 400px) 1fr",
           gap: "3rem",
           alignItems: "start"
         }}
