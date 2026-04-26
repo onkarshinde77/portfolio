@@ -19,8 +19,10 @@ export interface Project {
   complexity: 1 | 2 | 3;
   highlights: string[];
   architecture: string;
+  architectureDiagram?: string;
   evalResults: EvalResults;
   failureCases: string[];
+  whatILearned?: string[];
   stats: {
     latency?: string;
     evalScore?: string;
@@ -34,26 +36,58 @@ export interface Project {
 export const projects: Project[] = [
   {
     slug: "blog-writing-agent",
-    name: "Blog Writing Agent System",
-    tagline: "Autonomous multi-agent system that researches, writes, and refines full-length blog posts end-to-end",
-    description: `An autonomous multi-agent blog writing system built with LangGraph that orchestrates specialized AI agents to research, draft, and refine publication-quality blog posts with minimal human input.
+    name: "AI Blog Writing Agent",
+    tagline: "Autonomous multi-agent system that researches the web and writes comprehensive, structured blog posts — powered by LangGraph, Groq (LLaMA 3), and Tavily Search",
+    description: `An autonomous, multi-agent blog writing pipeline that takes a single topic as input and produces a fully-written, research-backed blog post — automatically. Unlike a simple prompt-to-text setup, this system uses a graph-based multi-agent workflow powered by LangGraph where specialized agents collaborate.
 
-The system uses a Supervisor → Worker architecture: a Router agent decomposes the writing task, an Orchestrator assigns sub-tasks to specialized Worker agents (Research Worker, Writer Worker, Critic Worker), and a Reducer collects and merges outputs into a final coherent blog post. The entire pipeline is observable via LangSmith for full traceability of agent decisions.
+The Router agent decides whether the topic needs live web research via Tavily Search API or can be answered from LLM knowledge. The Orchestrator plans the complete blog structure — title, sections, tone, target audience, and word-count targets. Multiple Worker agents then write each section simultaneously using LangGraph's fan-out pattern, and a Reducer stitches them into a final polished post.
 
-Built on Groq (LLaMA 3) for ultra-fast inference, Tavily API for real-time web research, and deployed as an interactive Streamlit app with persistent session history via LangGraph checkpointing. The system dramatically reduces blog writing time from hours to under 5 minutes.`,
-    tech: ["LangGraph", "LangChain", "LangSmith", "Groq (LLaMA 3)", "Tavily API", "Streamlit", "Python"],
+The result is a production-quality blog post with a one-click Markdown download option. All past blogs are instantly accessible in a ChatGPT-style sidebar history — every generation is stored independently via SQLite-backed LangGraph checkpointing so there's no context bleed between posts. The entire pipeline is fully observable with LangSmith tracing.`,
+    tech: ["LangGraph", "LangChain", "LangSmith", "Groq (LLaMA 3)", "Tavily API", "Streamlit", "Pydantic v2", "SQLite", "Python"],
     demoVideo: "https://youtube.com/embed/dQw4w9WgXcQ",
     github: "https://github.com/onkarshinde77/blog-writing-agent",
     complexity: 3,
     highlights: [
-      "Supervisor → Router → Orchestrator → Worker → Reducer agent hierarchy",
-      "Groq LLaMA 3 backend for sub-second inference per agent step",
-      "Real-time web research via Tavily API integrated into research agents",
-      "Full observability and tracing with LangSmith",
-      "Session history and state persistence via LangGraph checkpointing",
-      "Deployed as Streamlit app with chat-style history sidebar"
+      "Intelligent routing — auto-detects if the topic needs live web research",
+      "Parallel section writing via LangGraph fan-out (Send) pattern",
+      "Full LangSmith observability — every agent step traced end-to-end",
+      "SQLite-backed persistent checkpoint history (survives server restarts)",
+      "One-click Markdown download of any generated blog",
+      "ChatGPT-style sidebar with all past blog sessions",
+      "Structured blog planning by Orchestrator (title, sections, word targets)",
+      "Ultra-fast inference via Groq (LLaMA 3.1-8b)"
     ],
-    architecture: "User Prompt → Router Agent → Orchestrator Agent → [Research Worker | Writer Worker | Critic Worker] (parallel) → Reducer Agent → Final Blog Post → LangSmith Trace",
+    architectureDiagram: `START
+  │
+  ▼
+┌─────────┐
+│  Router │  ← Decides: research needed? (yes/no)
+└─────────┘
+  │         \\
+  ▼           ▼ (if no research needed)
+┌──────────┐   │
+│ Research │   │  ← Tavily real-time web search
+└──────────┘   │
+  │             │
+  └──────┬──────┘
+         ▼
+  ┌─────────────┐
+  │ Orchestrator│  ← Plans blog sections
+  └─────────────┘
+         │
+    (fan-out to N parallel workers)
+         │
+  ┌──────┴──────┐
+  ▼   ▼   ▼   ▼
+[W1][W2][W3][W4]   ← Workers (each writes one section)
+  └──────┬──────┘
+         ▼
+  ┌─────────┐
+  │ Reducer │  ← Merges all sections into final blog
+  └─────────┘
+         │
+        END`,
+    architecture: "User Prompt → Router Agent → [Research Node (Tavily)] → Orchestrator Agent (Blog Plan) → Parallel Worker Agents [W1..Wn] (fan-out) → Reducer Agent → Final Blog Post → LangSmith Trace → SQLite Checkpoint",
     evalResults: {
       relevancy: 93,
       faithfulness: 88,
@@ -64,201 +98,85 @@ Built on Groq (LLaMA 3) for ultra-fast inference, Tavily API for real-time web r
       "Research worker hallucinated citations — fixed by forcing Tavily search-grounded outputs and adding a citation validation step",
       "State corruption on long sessions — fixed by implementing LangGraph checkpoint-based state recovery"
     ],
+    whatILearned: [
+      "Workflow of Agentic AI — moving beyond linear prompts into robust, stateful node-based pipelines",
+      "Building agents with LangGraph — defining nodes, edges, state schemas, and conditional routing in a StateGraph",
+      "Parallel Execution / Fan-out Pattern — using Send to dynamically dispatch work to parallel worker agents simultaneously",
+      "Orchestrator Pattern — having a manager agent plan execution and dynamically generate steps for worker agents",
+      "Tool Calling (Tavily) — connecting LLMs to live external APIs to retrieve context dynamically",
+      "LangGraph Checkpointing — preserving full persistent history into SQLite, allowing users to scroll through past blogs",
+      "LangSmith Tracing — implementing full LLM observability to study rate limits, execution speeds, and inner-thought prompts",
+      "Advanced Prompt Engineering — crafting precise system prompts that yield structured, reliable programmatic output using Pydantic schemas"
+    ],
     stats: {
       latency: "< 5 min",
       evalScore: "93% relevancy",
       datasetSize: "Web-scale",
-      costPerCall: "~$0.00 (Groq free)"
+      costPerCall: "~$0.00 (Groq)"
     },
     category: "Agents & Tools",
     isResearch: false
   },
   {
-    slug: "rag-document-qna",
-    name: "RAG Document Q&A System",
-    tagline: "Retrieval-Augmented Generation pipeline for intelligent document question answering",
-    description: `A production-grade RAG (Retrieval-Augmented Generation) system that enables intelligent question answering over custom document collections. Users upload PDF documents which are chunked, embedded, and indexed into a FAISS vector store for efficient semantic retrieval.
-
-The pipeline combines dense vector retrieval with an LLM reader to generate grounded, faithful answers with source citations. The system supports multi-document collections, handles ambiguous queries via query rewriting, and provides a Streamlit-based interface for easy interaction.
-
-Built with LangChain for orchestration, HuggingFace sentence-transformers for embedding, FAISS for vector search, and Groq (LLaMA 3) for fast answer generation. Includes a custom faithfulness evaluation module that scores responses against retrieved context.`,
-    tech: ["LangChain", "FAISS", "HuggingFace", "Groq (LLaMA 3)", "Streamlit", "Python", "Sentence Transformers"],
-    demoVideo: "https://youtube.com/embed/dQw4w9WgXcQ",
-    github: "https://github.com/onkarshinde77/rag-document-qna",
-    complexity: 3,
-    highlights: [
-      "FAISS vector store with sentence-transformer embeddings",
-      "Query rewriting for ambiguous or vague user questions",
-      "Source citation alongside every generated answer",
-      "Multi-document collection support with metadata filtering",
-      "Custom faithfulness scoring against retrieved chunks"
-    ],
-    architecture: "PDF Upload → Text Chunking → Sentence-Transformer Embedding → FAISS Index → Query Rewriting → Semantic Retrieval (Top-K) → Context-Grounded LLM Answer → Source Citations",
-    evalResults: {
-      faithfulness: 87,
-      relevancy: 90,
-      latency: "1.2s avg"
-    },
-    failureCases: [
-      "Retrieval missed relevant chunks when query used different vocabulary — fixed by adding BM25 hybrid search",
-      "LLM answered from prior knowledge instead of retrieved context — fixed by adding explicit grounding instructions and hallucination detection"
-    ],
-    stats: {
-      latency: "1.2s avg",
-      evalScore: "87% faithfulness",
-      datasetSize: "Custom PDFs",
-      costPerCall: "~$0.00 (Groq)"
-    },
-    category: "RAG Systems"
-  },
-  {
     slug: "face-mask-detection",
     name: "Face Mask Detection System",
-    tagline: "Real-time face mask detection with 98% accuracy using MobileNetV2 + OpenCV",
-    description: `A real-time face mask detection system that achieved 98% classification accuracy on a 7,000-image dataset. The system uses a two-stage pipeline: first detecting faces in video frames using OpenCV's DNN-based face detector, then classifying each detected face as mask/no-mask using a fine-tuned MobileNetV2 model.
+    tagline: "AI-powered real-time face mask detection using deep learning — 98% face detection + 95% mask classification accuracy",
+    description: `A comprehensive Face Mask Detection System that uses state-of-the-art deep learning models to detect whether people are wearing masks. The system processes static images, video files, and live webcam feeds in real time.
 
-The model was trained with custom data augmentation (random flips, rotations, brightness adjustment) to improve robustness to diverse lighting conditions and face orientations. The system runs in real-time on standard webcam input, processing at approximately 25 FPS on CPU.
+The pipeline uses a two-stage approach: first, a Caffe DNN Single Shot MultiBox Detector (SSD) model detects all faces in the frame with 98%+ accuracy. Each detected face ROI is then cropped, preprocessed to 224×224 pixels, and classified as Mask / No Mask by a fine-tuned VGG16 model achieving 95%+ accuracy.
 
-Built as a complete end-to-end project — data collection, preprocessing, model training, evaluation, and deployment as a live demo application. Achieved 98% accuracy on the held-out test set across diverse demographic groups and lighting conditions.`,
-    tech: ["TensorFlow", "Keras", "MobileNetV2", "OpenCV", "NumPy", "Matplotlib", "Python"],
+The system is deployed as a Flask web application with a modern, responsive UI supporting photo upload, camera capture, video upload with background processing, and a live MJPEG webcam stream. The dataset (9,525 images) was published on Kaggle by the author and used for training, testing, and validation. Color-coded bounding boxes (green = mask, red = no mask) annotate the output in real time.`,
+    tech: ["TensorFlow", "Keras", "VGG16", "OpenCV", "Caffe DNN SSD", "Flask", "Python", "NumPy"],
     demoVideo: "https://youtube.com/embed/dQw4w9WgXcQ",
-    github: "https://github.com/onkarshinde77/face-mask-detection",
+    github: "https://github.com/onkarshinde77/face_mask_detector",
     complexity: 2,
     highlights: [
-      "98% test accuracy on 7,000-image custom dataset",
-      "Real-time detection at ~25 FPS on CPU using OpenCV",
-      "Transfer learning: MobileNetV2 pretrained on ImageNet",
-      "Two-stage pipeline: DNN face detector → MobileNetV2 classifier",
-      "Custom data augmentation pipeline for diverse conditions"
+      "Two-stage pipeline: Caffe DNN SSD face detector → VGG16 mask classifier",
+      "98% face detection accuracy + 95% mask classification accuracy",
+      "Real-time webcam stream via MJPEG with live bounding box overlays",
+      "Dataset of 9,525 images published on Kaggle by the author",
+      "Transfer learning: VGG16 pretrained on ImageNet, fine-tuned on custom dataset",
+      "Flask web app with photo upload, camera capture, and video processing",
+      "Background video processing with progress tracking",
+      "Color-coded bounding boxes: green (mask) / red (no mask)"
     ],
-    architecture: "Webcam Frame → OpenCV DNN Face Detector → Face ROI Crop → Preprocessing (resize, normalize) → MobileNetV2 Classifier → Mask / No-Mask Label → Real-time Overlay",
+    architectureDiagram: `Input (Image / Video / Webcam)
+        ↓
+Face Detection (Caffe DNN SSD — 300×300)
+        ↓
+Face Cropping & Preprocessing (224×224, VGG16 normalize)
+        ↓
+Batch Prediction (VGG16 — Binary Sigmoid)
+        ↓
+Post-processing & Annotation (bounding boxes, labels)
+        ↓
+Output (Annotated Image / Video / Stream)`,
+    architecture: "Input (Image/Video/Webcam) → Caffe DNN SSD Face Detector → Face ROI Crop → VGG16 Preprocessing (224×224) → VGG16 Binary Classifier → Mask/No-Mask + Confidence → Real-time Annotated Output",
     evalResults: {
-      accuracy: 98,
-      precision: 97,
-      recall: 98
+      accuracy: 95,
+      precision: 94,
+      recall: 96,
+      latency: "~50ms per image (CPU)"
     },
     failureCases: [
-      "Low accuracy on partially occluded faces — mitigated with aggressive augmentation including random occlusion patches",
-      "False positives for face-like objects (e.g., posters) — fixed by raising the face detection confidence threshold to 0.7"
+      "Low accuracy on partially occluded faces — mitigated with aggressive augmentation including random occlusion patches during training",
+      "False positives for face-like objects (e.g. posters) — fixed by raising the face detection confidence threshold to 0.7",
+      "Camera shows black screen in browser — resolved by ensuring the app is accessed via localhost (not 127.0.0.1) and checking browser camera permissions"
+    ],
+    whatILearned: [
+      "Transfer Learning — fine-tuning a pre-trained VGG16 model on a custom binary classification dataset",
+      "Two-stage detection pipeline — combining a Caffe DNN SSD detector with a CNN classifier",
+      "Data Collection & Annotation — building and publishing a 9,525-image dataset on Kaggle",
+      "Real-time video processing — MJPEG streaming with OpenCV frame-by-frame inference",
+      "Flask backend architecture — request handling, file upload management, background processing",
+      "Data Augmentation — rotation, zoom, flip, brightness adjustment for diverse condition robustness",
+      "Model Evaluation — precision, recall, F1, confusion matrix analysis across demographic groups"
     ],
     stats: {
-      latency: "~25 FPS real-time",
-      evalScore: "98% accuracy",
-      datasetSize: "7,000 images",
+      latency: "~50ms/image",
+      evalScore: "95% accuracy",
+      datasetSize: "9,525 images",
       costPerCall: "On-device"
-    },
-    category: "Computer Vision"
-  },
-  {
-    slug: "sentiment-analysis-nlp",
-    name: "NLP Sentiment Analysis Pipeline",
-    tagline: "Multi-class text sentiment classifier with 92% accuracy using LSTM and transformer features",
-    description: `A complete NLP pipeline for multi-class sentiment analysis (Positive / Negative / Neutral) on social media text. The system preprocesses raw text through a custom cleaning pipeline (tokenization, stopword removal, lemmatization), extracts features using TF-IDF and fine-tuned sentence embeddings, and classifies using a BiLSTM model.
-
-The project also benchmarks classical ML baselines (Naïve Bayes, Logistic Regression, SVM) against the deep learning approach, providing a comprehensive evaluation framework. Results are visualized through confusion matrices, ROC curves, and per-class precision/recall breakdowns.
-
-Achieved 92% macro-F1 on a benchmark Twitter dataset. The pipeline is packaged as a reusable Python module with a Streamlit demo interface.`,
-    tech: ["Python", "NLTK", "TensorFlow", "Keras", "Scikit-learn", "Pandas", "Matplotlib", "Streamlit"],
-    demoVideo: "https://youtube.com/embed/dQw4w9WgXcQ",
-    github: "https://github.com/onkarshinde77/sentiment-analysis",
-    complexity: 2,
-    highlights: [
-      "92% macro-F1 on benchmark Twitter sentiment dataset",
-      "BiLSTM model outperforming all classical ML baselines by 8%",
-      "Custom text cleaning pipeline for social media noise",
-      "Comprehensive benchmark: NaïveBayes, Logistic Regression, SVM, BiLSTM",
-      "Interactive Streamlit demo for real-time inference"
-    ],
-    architecture: "Raw Text → Custom Cleaning Pipeline → TF-IDF + Sentence Embeddings → BiLSTM (2-layer) → Softmax → Positive / Negative / Neutral",
-    evalResults: {
-      f1: 92,
-      accuracy: 91,
-      precision: 93
-    },
-    failureCases: [
-      "Model confused sarcastic text as positive — partially addressed with negation handling in preprocessing",
-      "Class imbalance (fewer neutral samples) causing bias — fixed with SMOTE oversampling on training set"
-    ],
-    stats: {
-      latency: "12ms per text",
-      evalScore: "92% F1",
-      datasetSize: "50k tweets",
-      costPerCall: "On-device"
-    },
-    category: "NLP"
-  },
-  {
-    slug: "data-analytics-platform",
-    name: "Data Analytics Platform",
-    tagline: "Interactive EDA and visualization platform for structured datasets with automated insight generation",
-    description: `An interactive data analytics platform that enables automated exploratory data analysis (EDA), statistical profiling, and visualization of structured datasets. Users upload CSV/Excel files and the platform auto-generates comprehensive reports: distribution plots, correlation heatmaps, missing value analysis, outlier detection, and statistical summaries.
-
-Built with Streamlit for the interactive frontend, Pandas for data processing, and Matplotlib/Seaborn for visualization. The platform also includes an automated insight engine that highlights key findings (skewed distributions, high correlations, class imbalances) in plain English.
-
-Designed to significantly speed up the EDA phase of any data science project — what typically takes hours of manual Jupyter notebook work is reduced to minutes of interactive exploration.`,
-    tech: ["Python", "Pandas", "NumPy", "Matplotlib", "Seaborn", "Streamlit", "Scikit-learn"],
-    demoVideo: "https://youtube.com/embed/dQw4w9WgXcQ",
-    github: "https://github.com/onkarshinde77/data-analytics-platform",
-    complexity: 1,
-    highlights: [
-      "Automated EDA report generation from CSV/Excel upload",
-      "Distribution plots, correlation heatmaps, outlier detection",
-      "Plain-English automated insight summaries",
-      "Handles datasets up to 500k rows efficiently",
-      "One-click export of full EDA report as HTML"
-    ],
-    architecture: "File Upload → Pandas DataFrame → Statistical Profiling → Automated Visualization Suite → Insight Engine → Interactive Dashboard",
-    evalResults: {
-      accuracy: 99,
-      latency: "< 30s for 100k rows"
-    },
-    failureCases: [
-      "Memory issues with very wide datasets (500+ columns) — fixed by lazy loading and column-by-column profiling",
-      "Incorrect dtype inference for mixed-type columns — fixed by adding explicit type detection logic"
-    ],
-    stats: {
-      latency: "< 30s",
-      evalScore: "Fully automated",
-      datasetSize: "Up to 500k rows",
-      costPerCall: "Free"
-    },
-    category: "Data Analytics"
-  },
-  {
-    slug: "civic-issue-reporting",
-    name: "AI-Powered Civic Issue Reporter",
-    tagline: "Image validation pipeline using YOLOv8 + Groq to auto-classify and route civic complaints",
-    description: `An AI-powered civic issue reporting platform that validates submitted images using a multi-stage computer vision pipeline before accepting reports. The system prevents frivolous submissions (e.g., photos of people or pets) by running images through a Roboflow YOLOv8 object detector followed by Groq Llama 3 for intelligent civic-issue classification.
-
-The backend is built with Node.js/Express using Multer for file handling and a local disk-based inference pipeline. The frontend provides a React-based report submission form with instant AI feedback. Validated reports are stored and routed to the appropriate municipal department.
-
-This project was built to solve the real problem of false reports flooding civic complaint systems — the AI validation layer rejects non-civic images immediately, keeping the system clean and actionable.`,
-    tech: ["Node.js", "Express", "React", "Roboflow YOLOv8", "Groq (LLaMA 3)", "Multer", "MongoDB"],
-    demoVideo: "https://youtube.com/embed/dQw4w9WgXcQ",
-    github: "https://github.com/onkarshinde77/civic-issue-reporter",
-    complexity: 2,
-    highlights: [
-      "Two-stage validation: YOLOv8 object detection → Groq LLM classification",
-      "Rejects non-civic images (humans, pets, plants) before submission",
-      "Real-time AI feedback to user on image validity",
-      "Multipart form data pipeline with Multer disk storage",
-      "Full MERN stack with MongoDB report storage"
-    ],
-    architecture: "Image Upload → Multer Disk Storage → YOLOv8 Object Detection (Roboflow) → Groq LLaMA 3 Civic Classifier → Valid/Invalid Decision → Report Storage (MongoDB) / User Rejection",
-    evalResults: {
-      accuracy: 91,
-      precision: 93,
-      recall: 89
-    },
-    failureCases: [
-      "YOLOv8 missed small potholes in dark images — addressed by adding brightness normalization in preprocessing",
-      "Groq classifier occasionally accepted images of trees as 'fallen tree hazards' — fixed with stricter prompt engineering"
-    ],
-    stats: {
-      latency: "2.1s per image",
-      evalScore: "91% accuracy",
-      datasetSize: "Custom civic dataset",
-      costPerCall: "~$0.00 (Groq)"
     },
     category: "Computer Vision"
   }

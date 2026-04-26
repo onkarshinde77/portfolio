@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Code2, Play, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
@@ -226,15 +226,11 @@ function FailureGallery({ failures }: { failures: string[] }) {
 export default function ProjectDetailPage({
   params
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const [project, setProject] = useState<Project | null>(null);
+  const { slug } = use(params);
+  const project = getProjectBySlug(slug) ?? null;
   const [videoOpen, setVideoOpen] = useState(false);
-
-  useEffect(() => {
-    const p = getProjectBySlug(params.slug);
-    setProject(p ?? null);
-  }, [params.slug]);
 
   if (!project) {
     return (
@@ -414,14 +410,13 @@ export default function ProjectDetailPage({
           ))}
         </div>
 
-        {/* Architecture placeholder */}
+        {/* Architecture */}
         <div
           className="glass-card"
           style={{
             padding: "1.75rem",
             marginBottom: "1.5rem",
-            borderStyle: "dashed",
-            background: "transparent"
+            background: "rgba(0,212,255,0.02)"
           }}
         >
           <h2
@@ -431,32 +426,41 @@ export default function ProjectDetailPage({
               fontWeight: 700,
               letterSpacing: "0.05em",
               color: "var(--text-primary)",
-              marginBottom: "0.75rem"
+              marginBottom: "1rem"
             }}
           >
             System Architecture
           </h2>
-          <div
-            style={{
-              fontFamily: "var(--font-code)",
-              fontSize: "12px",
-              color: "var(--accent-primary)",
-              lineHeight: 1.8,
-              marginBottom: "1rem",
-              wordBreak: "break-word"
-            }}
-          >
-            {project.architecture}
-          </div>
-          <p
-            style={{
-              fontFamily: "var(--font-code)",
-              fontSize: "11px",
-              color: "var(--text-muted)"
-            }}
-          >
-            📐 See GitHub for full Mermaid diagram with component details
-          </p>
+          {project.architectureDiagram ? (
+            <pre
+              style={{
+                fontFamily: "var(--font-code)",
+                fontSize: "12px",
+                color: "var(--accent-primary)",
+                lineHeight: 1.9,
+                overflowX: "auto",
+                padding: "1rem",
+                background: "rgba(0,212,255,0.04)",
+                borderRadius: "8px",
+                border: "1px solid var(--border)",
+                whiteSpace: "pre"
+              }}
+            >
+              {project.architectureDiagram}
+            </pre>
+          ) : (
+            <div
+              style={{
+                fontFamily: "var(--font-code)",
+                fontSize: "12px",
+                color: "var(--accent-primary)",
+                lineHeight: 1.8,
+                wordBreak: "break-word"
+              }}
+            >
+              {project.architecture}
+            </div>
+          )}
         </div>
 
         {/* Tech stack */}
@@ -513,6 +517,53 @@ export default function ProjectDetailPage({
         <div style={{ marginBottom: "1.5rem" }}>
           <FailureGallery failures={project.failureCases} />
         </div>
+
+        {/* What I Learned */}
+        {project.whatILearned && project.whatILearned.length > 0 && (
+          <div className="glass-card" style={{ padding: "1.75rem", marginBottom: "1.5rem" }}>
+            <h2
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "14px",
+                fontWeight: 700,
+                letterSpacing: "0.05em",
+                color: "var(--text-primary)",
+                marginBottom: "1rem"
+              }}
+            >
+              What I Learned
+            </h2>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
+              {project.whatILearned.map((item, i) => (
+                <li
+                  key={i}
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    alignItems: "flex-start",
+                    fontFamily: "var(--font-body)",
+                    fontSize: "0.9rem",
+                    color: "var(--text-muted)",
+                    lineHeight: 1.6
+                  }}
+                >
+                  <span
+                    style={{
+                      color: "var(--accent-primary)",
+                      fontFamily: "var(--font-code)",
+                      fontSize: "11px",
+                      marginTop: "3px",
+                      flexShrink: 0
+                    }}
+                  >
+                    [{String(i + 1).padStart(2, "0")}]
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Demo video */}
         <div className="glass-card" style={{ padding: "1.75rem", marginBottom: "1.5rem" }}>

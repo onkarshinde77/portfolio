@@ -54,7 +54,7 @@ export function CommandPalette() {
     },
     {
       id: "nav-projects",
-      label: "Go to Deployed Systems",
+      label: "Go to Projects",
       icon: <Hash size={14} />,
       action: () => {
         document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
@@ -140,11 +140,11 @@ export function CommandPalette() {
 
   const filtered = query.trim()
     ? commands.filter(
-        c =>
-          c.label.toLowerCase().includes(query.toLowerCase()) ||
-          c.description?.toLowerCase().includes(query.toLowerCase()) ||
-          c.category.toLowerCase().includes(query.toLowerCase())
-      )
+      c =>
+        c.label.toLowerCase().includes(query.toLowerCase()) ||
+        c.description?.toLowerCase().includes(query.toLowerCase()) ||
+        c.category.toLowerCase().includes(query.toLowerCase())
+    )
     : commands;
 
   const grouped = filtered.reduce<Record<string, CommandItem[]>>(

@@ -231,7 +231,7 @@ export function AboutSection() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "minmax(400px, 400px) 1fr",
+          gridTemplateColumns: "minmax(0, 380px) 1fr",
           gap: "3rem",
           alignItems: "start"
         }}
@@ -239,12 +239,13 @@ export function AboutSection() {
       >
         <ModelCard />
 
-        {/* Bio */}
+        {/* Bio — min-width:0 prevents grid blowout */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+          style={{ minWidth: 0 }}
         >
           {siteConfig.bio.map((paragraph, i) => (
             <p
@@ -266,7 +267,7 @@ export function AboutSection() {
       </div>
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .about-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>

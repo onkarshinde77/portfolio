@@ -362,7 +362,7 @@ export function ProjectsSection() {
       id="projects"
       style={{
         padding: "6rem 2rem",
-        maxWidth: "1200px",
+        maxWidth: "1100px",
         margin: "0 auto",
         position: "relative"
       }}
@@ -397,40 +397,26 @@ export function ProjectsSection() {
             letterSpacing: "-0.02em"
           }}
         >
-          Deployed Systems
+          Projects
         </h2>
       </motion.div>
 
-      {/* Masonry-style grid */}
+      {/* 2-column featured layout */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "1.25rem",
-          gridAutoRows: "auto"
+          gridTemplateColumns: "repeat(2, 1fr)",
+          gap: "1.5rem"
         }}
         className="projects-grid"
       >
-        {projects.map((project, i) => (
-          <div
-            key={project.slug}
-            style={{
-              gridRow: i % 3 === 0 ? "span 1" : "span 1"
-            }}
-          >
-            <ProjectCard
-              project={project}
-              tall={i % 3 === 1 || project.isResearch}
-            />
-          </div>
+        {projects.map(project => (
+          <ProjectCard key={project.slug} project={project} tall />
         ))}
       </div>
 
       <style>{`
-        @media (max-width: 1024px) {
-          .projects-grid { grid-template-columns: repeat(2, 1fr) !important; }
-        }
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
           .projects-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
