@@ -4,7 +4,13 @@ import { use, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Code2, Play, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { getProjectBySlug, type Project, type EvalResults } from "@/data/projects";
+
+const FaceMaskDemo = dynamic(
+  () => import("@/components/FaceMaskDemo").then(mod => mod.FaceMaskDemo),
+  { ssr: false }
+);
 
 function getScoreColor(score: number): string {
   if (score >= 85) return "var(--accent-tertiary)";
@@ -579,34 +585,65 @@ export default function ProjectDetailPage({
           >
             Demo
           </h2>
-          {videoOpen ? (
-            <div style={{ aspectRatio: "16/9", borderRadius: "8px", overflow: "hidden" }}>
-              <iframe
-                src={project.demoVideo}
-                style={{ width: "100%", height: "100%", border: "none" }}
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-              />
-            </div>
+          {project.slug === "face-mask-detection" ? (
+            <>
+              {videoOpen ? (
+                <div style={{ marginBottom: "2rem" }}>
+                  <FaceMaskDemo />
+                </div>
+              ) : (
+                <button
+                  onClick={() => setVideoOpen(true)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "10px 20px",
+                    borderRadius: "8px",
+                    background: "rgba(0,212,255,0.1)",
+                    border: "1px solid rgba(0,212,255,0.25)",
+                    color: "var(--accent-primary)",
+                    fontFamily: "var(--font-code)",
+                    fontSize: "12px",
+                    cursor: "pointer"
+                  }}
+                >
+                  <Play size={14} /> Open Live Demo
+                </button>
+              )}
+            </>
           ) : (
-            <button
-              onClick={() => setVideoOpen(true)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 20px",
-                borderRadius: "8px",
-                background: "rgba(0,212,255,0.1)",
-                border: "1px solid rgba(0,212,255,0.25)",
-                color: "var(--accent-primary)",
-                fontFamily: "var(--font-code)",
-                fontSize: "12px",
-                cursor: "pointer"
-              }}
-            >
-              <Play size={14} /> Play Demo Video
-            </button>
+            <>
+              {videoOpen ? (
+                <div style={{ aspectRatio: "16/9", borderRadius: "8px", overflow: "hidden" }}>
+                  <iframe
+                    src={project.demoVideo}
+                    style={{ width: "100%", height: "100%", border: "none" }}
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                  />
+                </div>
+              ) : (
+                <button
+                  onClick={() => setVideoOpen(true)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "10px 20px",
+                    borderRadius: "8px",
+                    background: "rgba(0,212,255,0.1)",
+                    border: "1px solid rgba(0,212,255,0.25)",
+                    color: "var(--accent-primary)",
+                    fontFamily: "var(--font-code)",
+                    fontSize: "12px",
+                    cursor: "pointer"
+                  }}
+                >
+                  <Play size={14} /> Play Demo Video
+                </button>
+              )}
+            </>
           )}
         </div>
 
