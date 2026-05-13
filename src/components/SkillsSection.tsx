@@ -7,7 +7,9 @@ import {
   Eye,
   Bot,
   BarChart3,
-  Code
+  Code,
+  Terminal,
+  Layout
 } from "lucide-react";
 
 interface SkillCategory {
@@ -21,38 +23,50 @@ const skillCategories: SkillCategory[] = [
   {
     icon: <Bot size={24} />,
     category: "Agentic AI",
-    skills: ["LangGraph", "LangChain", "LangSmith", "Groq LLaMA 3", "Tavily API", "Multi-Agent"],
+    skills: ["LangGraph", "LangChain", "LangSmith", "Multi-Agent Systems", "Groq LLaMA 3", "Tavily API", "AI Workflow Automation", "Tool Calling", "Prompt Engineering", "Autonomous Agents"],
     proficiency: 92
   },
   {
     icon: <Database size={24} />,
     category: "RAG Systems",
-    skills: ["FAISS", "Pinecone", "HuggingFace", "Document QnA", "Semantic Search", "Chunking"],
+    skills: ["FAISS", "Pinecone", "Hugging Face", "Semantic Search", "Document QnA", "Vector Databases", "Chunking", "Embedding Models", "Retrieval Pipelines", "Context Injection"],
     proficiency: 88
   },
   {
     icon: <Brain size={24} />,
     category: "Deep Learning",
-    skills: ["TensorFlow", "Keras", "PyTorch", "MobileNetV2", "BiLSTM", "Transfer Learning"],
+    skills: ["TensorFlow", "Keras", "PyTorch", "CNN", "Transfer Learning", "MobileNetV2", "VGG16", "BiLSTM", "Neural Networks", "Model Optimization"],
     proficiency: 87
   },
   {
     icon: <Eye size={24} />,
     category: "Computer Vision",
-    skills: ["OpenCV", "YOLOv8", "Roboflow", "Object Detection", "Image Classification", "Real-time CV"],
+    skills: ["OpenCV", "YOLOv8", "Roboflow", "Object Detection", "Image Classification", "Real-time CV", "Face Detection", "Video Processing", "OCR Systems", "Tracking Systems"],
     proficiency: 85
   },
   {
     icon: <Code size={24} />,
     category: "NLP",
-    skills: ["NLTK", "Transformers", "Sentiment Analysis", "TF-IDF", "Text Classification", "Scikit-learn"],
+    skills: ["Transformers", "NLTK", "Text Classification", "Sentiment Analysis", "TF-IDF", "Duplicate Question Detection", "Word Embeddings", "Tokenization", "Sequence Models", "Hugging Face Models"],
     proficiency: 84
   },
   {
     icon: <BarChart3 size={24} />,
     category: "Data & Backend",
-    skills: ["Pandas", "NumPy", "Streamlit", "FastAPI", "Django", "Docker"],
+    skills: ["Pandas", "NumPy", "Scikit-learn", "FastAPI", "Flask", "Django", "Streamlit", "REST APIs", "Docker", "MySQL"],
     proficiency: 86
+  },
+  {
+    icon: <Terminal size={24} />,
+    category: "Deployment & DevOps",
+    skills: ["Docker", "Vercel", "Render", "Git", "GitHub", "CI/CD Basics", "Containerization", "Linux", "API Deployment", "Environment Management"],
+    proficiency: 82
+  },
+  {
+    icon: <Layout size={24} />,
+    category: "Frontend & UI",
+    skills: ["HTML", "CSS", "JavaScript", "TailwindCSS", "Responsive Design", "React", "Portfolio Design", "Animations", "Component Architecture", "Modern UI/UX"],
+    proficiency: 80
   }
 ];
 

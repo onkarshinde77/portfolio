@@ -20,10 +20,13 @@ export const siteConfig = {
   tagline: "Building intelligent systems that reason, adapt, and ship.",
   objective:
     "AI/ML developer with experience in deep learning, agentic AI, and computer vision, focused on building scalable, real-world intelligent systems.",
+  // bio: [
+  //   "I'm a second-year B.E. (AI & Data Science) student at DY Patil College of Engineering, Pune — obsessively interested in how intelligent systems reason, fail, and can be made reliable. My work spans agentic AI, computer vision, and NLP, and I care as much about evaluation methodology as I do about model architecture.",
+  //   "I've built autonomous multi-agent systems with LangGraph, deep learning pipelines for computer vision (face mask detection at 98% accuracy), NLP classifiers, and data analytics applications. Every system I ship is production-ready — Dockerized, deployed, and evaluated."
+  // ],
   bio: [
-    "I'm a second-year B.E. (AI & Data Science) student at DY Patil College of Engineering, Pune — obsessively interested in how intelligent systems reason, fail, and can be made reliable. My work spans agentic AI, computer vision, and NLP, and I care as much about evaluation methodology as I do about model architecture.",
-    "I've built autonomous multi-agent systems with LangGraph, deep learning pipelines for computer vision (face mask detection at 98% accuracy), NLP classifiers, and data analytics applications. Every system I ship is production-ready — Dockerized, deployed, and evaluated.",
-    "Currently serving as Commander of the Competitive Programming & Mentorship Club, engaging in coding contests, hackathons, and workshops while mentoring peers. Open to AI engineering internships and research collaborations."
+    "I'm a second-year B.E. student in Artificial Intelligence & Data Science at DY Patil College of Engineering, Pune, deeply passionate about building intelligent systems that are practical, reliable, and impactful. My interests span Agentic AI, Computer Vision, NLP, Machine Learning, and full-stack AI development, with a strong focus on how AI systems reason, adapt, and perform in real-world environments.",
+    "I've developed autonomous multi-agent workflows using LangGraph, computer vision systems including high-accuracy face mask detection models, NLP-based classification applications, recommendation systems, and AI-powered analytics platforms. I enjoy transforming ideas into production-ready solutions using technologies like Python, FastAPI, React, Docker, and modern AI frameworks while continuously exploring scalable and innovative AI architectures."
   ],
   currentlyBuilding: "Blog Writing Agent System",
   techTicker: [

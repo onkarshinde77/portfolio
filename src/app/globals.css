@@ -45,13 +45,11 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
+  background-image: repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.03) 2px,
+      rgba(0, 0, 0, 0.03) 4px);
   pointer-events: none;
   z-index: 9998;
 }
@@ -71,9 +69,11 @@ body::before {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--bg-primary);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--accent-primary);
   opacity: 0.3;
@@ -132,14 +132,29 @@ body::before {
 }
 
 /* Typography */
-.font-display { font-family: var(--font-display); }
-.font-body { font-family: var(--font-body); }
-.font-code { font-family: var(--font-code); }
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-code {
+  font-family: var(--font-code);
+}
 
 /* Blinking cursor */
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
 .blink-cursor::after {
@@ -151,8 +166,17 @@ body::before {
 
 /* Pulsing dot */
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
 }
 
 .pulse-dot {
@@ -161,8 +185,13 @@ body::before {
 
 /* Ticker animation */
 @keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .ticker-wrapper {
@@ -187,16 +216,27 @@ body::before {
 
 /* Animated gradient noise for hero */
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .hero-gradient {
-  background: radial-gradient(ellipse at 20% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 60%),
-              radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 60%),
-              var(--bg-primary);
+  background: radial-gradient(ellipse at 20% 50%, rgba(0, 212, 255, 0.03) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.12) 0%, transparent 60%),
+    var(--bg-primary);
 }
+
+/* background: radial-gradient(ellipse at 20% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 60%),
+radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 60%), */
 
 /* Complexity bar */
 .complexity-bar {
@@ -300,8 +340,17 @@ body::before {
 
 /* Pulsing border */
 @keyframes borderPulse {
-  0%, 100% { border-color: rgba(0, 212, 255, 0.2); box-shadow: 0 0 10px rgba(0, 212, 255, 0.1); }
-  50% { border-color: rgba(0, 212, 255, 0.5); box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+
+  0%,
+  100% {
+    border-color: rgba(0, 212, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.1);
+  }
+
+  50% {
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+  }
 }
 
 .pulse-border {
@@ -310,8 +359,15 @@ body::before {
 
 /* Live badge */
 @keyframes livePulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 .live-dot {
@@ -326,9 +382,17 @@ body::before {
 
 /* Mobile canvas replacement */
 @media (max-width: 768px) {
-  .hero-3d-canvas { display: none; }
-  .hero-mobile-bg { display: block; }
+  .hero-3d-canvas {
+    display: none;
+  }
+
+  .hero-mobile-bg {
+    display: block;
+  }
 }
+
 @media (min-width: 769px) {
-  .hero-mobile-bg { display: none; }
+  .hero-mobile-bg {
+    display: none;
+  }
 }

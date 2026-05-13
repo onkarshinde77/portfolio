@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 
 /* ── palette ── */
 const CY = "#00d4ff", PU = "#7c3aed", GR = "#10b981", OR = "#f97316", AM = "#f59e0b";
-const LAYER_COLS = [OR, "#fbbf24", CY, GR, "#6ee7b7"];
+const LAYER_COLS = [PU, "#4c1d95", CY, "#5b21b6", "#2e1065"]; // Darker UV/blacklight palette
 const LAYERS     = [5, 7, 8, 7, 4];
 
 function r(hex: string, a: number) {
@@ -136,7 +136,7 @@ export function GlobalNeuralBg() {
     <canvas
       ref={ref}
       style={{position:"fixed",inset:0,width:"100vw",height:"100vh",
-              pointerEvents:"none",zIndex:0,opacity:.82}}
+              pointerEvents:"none",zIndex:0,opacity:.35}}
       aria-hidden="true"
     />
   );
