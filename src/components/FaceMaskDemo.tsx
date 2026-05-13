@@ -15,7 +15,24 @@ export function FaceMaskDemo() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
   const requestRef = useRef<number | null>(null);
+
+  // Check backend health on mount
+  useEffect(() => {
+    const checkBackend = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/health', { signal: AbortSignal.timeout(3000) });
+        setBackendOnline(res.ok);
+      } catch {
+        setBackendOnline(false);
+      }
+    };
+    checkBackend();
+    // Re-check every 10 seconds so the banner clears automatically when the server starts
+    const interval = setInterval(checkBackend, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Initialize camera
   const startCamera = async () => {
@@ -71,22 +88,22 @@ export function FaceMaskDemo() {
         const base64Image = canvas.toDataURL('image/jpeg', 0.8);
 
         try {
-          // Assuming your python backend is running on localhost:8000
           const response = await fetch('http://localhost:8000/detect', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ image: base64Image }),
+            signal: AbortSignal.timeout(5000),
           });
 
           if (response.ok) {
             const data: Detection[] = await response.json();
+            setBackendOnline(true);
             drawDetections(data);
           }
         } catch (err) {
-          console.error('Error sending frame to API', err);
-          // Don't spam errors on the UI to avoid flickering, just silently fail and try next frame
+          // Mark backend as offline so the banner appears — suppress console spam
+          setBackendOnline(false);
+          void err;
         }
       }
       setIsProcessing(false);
@@ -193,6 +210,16 @@ export function FaceMaskDemo() {
           <div className="absolute top-4 left-4 right-4 z-20 bg-red-500/20 text-red-400 p-3 rounded-md flex items-center border border-red-500/30 text-sm">
             <AlertCircle size={16} className="mr-2 shrink-0" />
             {error}
+          </div>
+        )}
+
+        {backendOnline === false && (
+          <div className="absolute bottom-4 left-4 right-4 z-20 bg-yellow-500/15 text-yellow-400 p-3 rounded-md flex items-center border border-yellow-500/30 text-sm">
+            <AlertCircle size={16} className="mr-2 shrink-0" />
+            Backend offline — start the API server:&nbsp;
+            <code className="font-mono text-xs bg-black/40 px-1 rounded">
+              python scripts/face_mask_api.py
+            </code>
           </div>
         )}
 

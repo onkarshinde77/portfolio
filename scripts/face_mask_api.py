@@ -67,6 +67,10 @@ async def startup_event():
 class FrameRequest(BaseModel):
     image: str
 
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "models_loaded": face_detector is not None and mask_classifier is not None}
+
 @app.post("/detect")
 async def detect_mask(req: FrameRequest):
     # If models failed to load, return mock data
