@@ -34,8 +34,8 @@ const skillCategories: SkillCategory[] = [
   },
   {
     icon: <Brain size={24} />,
-    category: "Deep Learning",
-    skills: ["TensorFlow", "Keras", "PyTorch", "CNN", "Transfer Learning", "MobileNetV2", "VGG16", "BiLSTM", "Neural Networks", "Model Optimization"],
+    category: "Deep Learning & NLP",
+    skills: ["TensorFlow", "PyTorch", "Neural Networks", "CNN & Sequence Models", "Transformers", "Transfer Learning", "Word Embeddings", "Text Classification", "Tokenization", "Model Optimization"],
     proficiency: 87
   },
   {
@@ -43,12 +43,6 @@ const skillCategories: SkillCategory[] = [
     category: "Computer Vision",
     skills: ["OpenCV", "YOLOv8", "Roboflow", "Object Detection", "Image Classification", "Real-time CV", "Face Detection", "Video Processing", "OCR Systems", "Tracking Systems"],
     proficiency: 85
-  },
-  {
-    icon: <Code size={24} />,
-    category: "NLP",
-    skills: ["Transformers", "NLTK", "Text Classification", "Sentiment Analysis", "TF-IDF", "Duplicate Question Detection", "Word Embeddings", "Tokenization", "Sequence Models", "Hugging Face Models"],
-    proficiency: 84
   },
   {
     icon: <BarChart3 size={24} />,
@@ -61,12 +55,6 @@ const skillCategories: SkillCategory[] = [
     category: "Deployment & DevOps",
     skills: ["Docker", "Vercel", "Render", "Git", "GitHub", "CI/CD Basics", "Containerization", "Linux", "API Deployment", "Environment Management"],
     proficiency: 82
-  },
-  {
-    icon: <Layout size={24} />,
-    category: "Frontend & UI",
-    skills: ["HTML", "CSS", "JavaScript", "TailwindCSS", "Responsive Design", "React", "Portfolio Design", "Animations", "Component Architecture", "Modern UI/UX"],
-    proficiency: 80
   }
 ];
 
@@ -239,7 +227,7 @@ export function SkillsSection() {
         <div
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "12px",
+            fontSize: "20px",
             letterSpacing: "0.2em",
             color: "var(--accent-primary)",
             textTransform: "uppercase",

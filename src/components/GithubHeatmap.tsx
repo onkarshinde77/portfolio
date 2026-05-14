@@ -99,8 +99,8 @@ export function GithubHeatmap() {
   const longestStreak = getLongestStreak(last365);
   const currentStreak = getCurrentStreak(last365);
 
-  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const DAYS = ["S","M","T","W","T","F","S"];
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
 
   return (
     <section
@@ -123,7 +123,7 @@ export function GithubHeatmap() {
         <div
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "12px",
+            fontSize: "20px",
             letterSpacing: "0.2em",
             color: "var(--accent-primary)",
             textTransform: "uppercase",

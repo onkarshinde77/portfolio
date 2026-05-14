@@ -30,7 +30,7 @@ export function ContactSection() {
         <div
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "12px",
+            fontSize: "20px",
             letterSpacing: "0.2em",
             color: "var(--accent-primary)",
             textTransform: "uppercase",
@@ -160,7 +160,7 @@ export function ContactSection() {
       </motion.div>
 
       {/* Footer */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -175,10 +175,10 @@ export function ContactSection() {
       >
         Built with Next.js 14 · React Three Fiber · Framer Motion · TypeScript
         <br />
-        <span style={{ opacity: 0.5 }}>
-          <span suppressHydrationWarning>© {new Date().getFullYear()} {siteConfig.name}</span>
-        </span>
-      </motion.div>
+      </motion.div> */}
+      <span style={{ opacity: 0.5 }}>
+        <span suppressHydrationWarning>© {new Date().getFullYear()} {siteConfig.name}</span>
+      </span>
     </section>
   );
 }

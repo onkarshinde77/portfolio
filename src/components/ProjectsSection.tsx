@@ -379,7 +379,7 @@ export function ProjectsSection() {
         <div
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "12px",
+            fontSize: "20px",
             letterSpacing: "0.2em",
             color: "var(--accent-primary)",
             textTransform: "uppercase",

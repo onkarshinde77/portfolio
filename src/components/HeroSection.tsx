@@ -83,7 +83,7 @@ export function HeroSection() {
             className="blink-cursor"
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "13px",
+              fontSize: "20px",
               letterSpacing: "0.2em",
               color: "var(--accent-primary)",
               textTransform: "uppercase",

@@ -135,7 +135,7 @@ export function EvalDashboard() {
           <div
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "12px",
+              fontSize: "20px",
               letterSpacing: "0.2em",
               color: "var(--accent-primary)",
               textTransform: "uppercase",
@@ -401,8 +401,8 @@ export function EvalDashboard() {
                         run.score >= 85
                           ? "var(--accent-tertiary)"
                           : run.score >= 70
-                          ? "#f59e0b"
-                          : "#ef4444",
+                            ? "#f59e0b"
+                            : "#ef4444",
                       fontWeight: 600
                     }}
                   >
