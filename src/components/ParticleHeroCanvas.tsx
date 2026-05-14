@@ -38,28 +38,30 @@ void main() {
     0.0
   );
 
-  // Mouse hover pixel displacement effect
-  if (uProgress > 0.9) {
-    vec2 mouseWorld = vec2(uMouse.x * uViewport.x * 0.5, uMouse.y * uViewport.y * 0.5);
-    float dist = distance(mouseWorld, targetPos.xy);
-    
-    float hoverRadius = 5.0;
-    if (dist < hoverRadius) {
-      vec2 dir = normalize(targetPos.xy - mouseWorld);
-      float strength = pow(1.0 - (dist / hoverRadius), 3.0);
-      
-      // Extremely subtle X/Y push to prevent the "black hole"
-      targetPos.xy += dir * strength * 0.05;
-      
-      // Push particles towards the camera for a 3D popping/bulge effect
-      targetPos.z += strength * 1.0;
-    }
-  }
-
   // Staggered assembly effect (smoother transition)
   float delay = (1.0 - imageUV.x) * 0.3 + fract(sin(dot(imageUV, vec2(12.9898, 78.233))) * 43758.5453) * 0.1;
   float p = clamp((uProgress - delay * 0.5) / 0.85, 0.0, 1.0);
   p = smoothstep(0.0, 1.0, p);
+
+  // Mouse hover pixel spreading effect
+  if (uProgress > 0.9) {
+    vec2 mouseWorld = vec2(uMouse.x * uViewport.x * 0.5, uMouse.y * uViewport.y * 0.5);
+    float dist = distance(mouseWorld, targetPos.xy);
+    
+    float hoverRadius = 4.0;
+    if (dist < hoverRadius) {
+      vec2 dir = normalize(targetPos.xy - mouseWorld);
+      float strength = pow(1.0 - (dist / hoverRadius), 2.5);
+      
+      // Disperse the particles back to their scattered state
+      p = mix(p, 0.0, strength * 0.85);
+      
+      // Add a cinematic outward blast
+      targetPos.xy += dir * strength * 1.5;
+      targetPos.z += strength * 2.5;
+    }
+  }
+
   vProgress = p;
 
   vec3 finalPos = mix(pos, targetPos, p);
