@@ -162,20 +162,10 @@ export function CNNVisualization() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          {/* <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 text-glow">
-            Neural Identity<span style={{ color: "var(--accent-primary)" }}>.forward()</span>
-          </h1>
-          <p className="text-muted font-body max-w-2xl mx-auto mb-8">
-            Visualizing the hierarchical feature extraction process of a Convolutional Neural Network 
-            interpreting my profile representation in latent space.
-          </p> */}
-          <br></br>
-          <br></br>
-          <br></br>
           <button
             onClick={startInference}
             disabled={isProcessing}
-            className="btn-primary flex items-center gap-2 mx-auto mt-20"
+            className="btn-primary flex items-center gap-2 mx-auto"
             style={{ opacity: isProcessing ? 0.7 : 1 }}
           >
             {isProcessing ? (
@@ -187,11 +177,8 @@ export function CNNVisualization() {
               "Initialize Forward Pass"
             )}
           </button>
-          <br></br>
-          <br></br>
-          <br></br>
-          <br></br>
         </motion.div>
+
         {/* Network Visualization Container */}
         <div
           ref={containerRef}
@@ -203,6 +190,7 @@ export function CNNVisualization() {
             className="absolute inset-0 pointer-events-none z-0"
             style={{ width: "100%", height: "100%" }}
           />
+
           {layers.map((layer, layerIdx) => {
             const isActive = activeLayer === layerIdx;
             const isPast = activeLayer > layerIdx;
@@ -215,7 +203,7 @@ export function CNNVisualization() {
               >
                 {/* Layer Label */}
                 <div
-                  className="absolute -top-16 text-center w-32 left-1/2 -translate-x-1/2 transition-opacity duration-300"
+                  className="absolute -top-10 text-center w-32 left-1/2 -translate-x-1/2 transition-opacity duration-300"
                   style={{
                     opacity: isActive ? 1 : 0.4,
                     color: isActive ? "var(--accent-primary)" : "var(--text-muted)"
@@ -327,7 +315,7 @@ export function CNNVisualization() {
                 </div>
 
                 {/* Layer dimensions label below */}
-                <div className="absolute -bottom-12 text-center text-[10px] font-code text-muted opacity-60 w-32 left-1/2 -translate-x-1/2">
+                <div className="absolute -bottom-8 text-center text-[10px] font-code text-muted opacity-60 w-32 left-1/2 -translate-x-1/2">
                   {layer.type === 'dense' || layer.type === 'flatten' || layer.type === 'output'
                     ? `[${layer.size}]`
                     : `[${layer.dims[0]}x${layer.dims[1]}x${layer.size}]`}

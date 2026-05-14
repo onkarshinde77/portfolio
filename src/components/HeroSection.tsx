@@ -5,8 +5,8 @@ import { Code2, Link, AtSign, ExternalLink, ArrowDown } from "lucide-react";
 import dynamic from "next/dynamic";
 import { siteConfig } from "@/data/site-config";
 
-const NeuralCanvas = dynamic(
-  () => import("./NeuralCanvas").then(m => m.NeuralCanvas),
+const ParticleHeroCanvas = dynamic(
+  () => import("./ParticleHeroCanvas").then(m => m.ParticleHeroCanvas),
   { ssr: false }
 );
 
@@ -48,7 +48,7 @@ export function HeroSection() {
         className="hero-3d-canvas"
         style={{ position: "absolute", inset: 0, zIndex: 0 }}
       >
-        <NeuralCanvas />
+        <ParticleHeroCanvas />
       </div>
 
       {/* Mobile gradient background */}
