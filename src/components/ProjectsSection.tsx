@@ -109,17 +109,8 @@ function ProjectCard({
   project: Project;
   tall?: boolean;
 }) {
-  const [videoOpen, setVideoOpen] = useState(false);
-
   return (
     <>
-      {videoOpen && (
-        <VideoModal
-          url={project.demoVideo}
-          onClose={() => setVideoOpen(false)}
-        />
-      )}
-
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -130,7 +121,7 @@ function ProjectCard({
           padding: "1.75rem",
           position: "relative",
           overflow: "hidden",
-          minHeight: tall ? "420px" : "320px",
+          minHeight: "auto",
           display: "flex",
           flexDirection: "column",
           transition: "all 0.3s ease"
@@ -267,32 +258,6 @@ function ProjectCard({
             marginTop: "auto"
           }}
         >
-          <button
-            onClick={() => setVideoOpen(true)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "5px",
-              padding: "7px 14px",
-              borderRadius: "6px",
-              background: "rgba(0,212,255,0.1)",
-              border: "1px solid rgba(0,212,255,0.25)",
-              color: "var(--accent-primary)",
-              fontFamily: "var(--font-code)",
-              fontSize: "11px",
-              cursor: "pointer",
-              transition: "all 0.2s ease"
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,212,255,0.18)";
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,212,255,0.1)";
-            }}
-          >
-            <Play size={11} /> Demo
-          </button>
-
           <Link
             href={`/projects/${project.slug}`}
             style={{
@@ -411,7 +376,7 @@ export function ProjectsSection() {
         className="projects-grid"
       >
         {projects.map(project => (
-          <ProjectCard key={project.slug} project={project} tall />
+          <ProjectCard key={project.slug} project={project} />
         ))}
       </div>
 

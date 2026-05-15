@@ -60,9 +60,9 @@ function ModelCard() {
           key: "Tasks",
           value: "Agentic AI · RAG · Computer Vision · NLP"
         },
-        { key: "Languages", value: "Python · JavaScript · SQL" },
+        { key: "Languages", value: "Python · SQL" },
         { key: "GPA", value: `${siteConfig.gpa} / 10` },
-        { key: "License", value: "Open to internships" }
+        { key: "License", value: "Open for Internships" }
       ].map(({ key, value }) => (
         <div
           key={key}

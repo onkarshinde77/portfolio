@@ -97,6 +97,12 @@ export const knowledgeBase: KnowledgeChunk[] = [
     metadata: { type: "project", source: "resume", slug: "civic-issue-reporting" }
   },
   {
+    id: "project-duplicate-question",
+    category: "projects",
+    content: `Duplicate Question Pair Detector: Developed an NLP and machine learning model to predict if two questions have the same meaning, handling 30,000+ question pairs. Achieved an F1-score of 0.84. Deployed as a web application using FastAPI and Docker, optimizing feature engineering and word embeddings for limited hardware. GitHub: github.com/onkarshinde77/duplicate-question-pair`,
+    metadata: { type: "project", source: "resume", slug: "duplicate-question-pair" }
+  },
+  {
     id: "tech-stack",
     category: "skills",
     content: `Onkar Shinde's complete tech stack: Languages: Python, JavaScript, Node.js, SQL. AI/ML Frameworks: TensorFlow, Keras, PyTorch, Scikit-learn, OpenCV, HuggingFace Transformers. Agentic AI: LangChain, LangGraph, LangSmith, Groq API, Tavily API. Vector Databases: FAISS, Pinecone. Web: Django, Flask, FastAPI, Express, React, Streamlit. Databases: MongoDB, SQL. Tools: Docker, Git, Multer.`,

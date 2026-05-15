@@ -4,7 +4,7 @@ export const siteConfig = {
   college: "D Y Patil College Of Engineering Akurdi, Pune",
   branch: "B.E. in Artificial Intelligence & Data Science",
   year: "2023 – 2027",
-  gpa: "8.34",
+  gpa: "8",
   location: "Pune, India",
   email: "onkarshinde.ai@gmail.com",
   phone: "9309313545",

@@ -2,226 +2,94 @@
 
 import { use, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Code2, Play, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, Code2, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { getProjectBySlug, type Project, type EvalResults } from "@/data/projects";
+import Image from "next/image";
+import { getProjectBySlug, type EvalResults } from "@/data/projects";
+import s from "./page.module.css";
 
-const FaceMaskDemo = dynamic(
-  () => import("@/components/FaceMaskDemo").then(mod => mod.FaceMaskDemo),
-  { ssr: false }
-);
-
-function getScoreColor(score: number): string {
-  if (score >= 85) return "var(--accent-tertiary)";
-  if (score >= 70) return "#f59e0b";
-  return "#ef4444";
+/* ─── helpers ─── */
+function scoreColor(n: number) {
+  return n >= 85 ? "var(--accent-tertiary)" : n >= 70 ? "#f59e0b" : "#ef4444";
 }
 
-function EvalTable({ results }: { results: EvalResults }) {
-  const entries = Object.entries(results).filter(
-    ([, v]) => typeof v === "number"
-  ) as [string, number][];
-  const latency = results.latency;
-
+/* ─── Metrics ─── */
+function Metrics({ results }: { results: EvalResults }) {
+  const nums = Object.entries(results).filter(([, v]) => typeof v === "number") as [string, number][];
   return (
-    <div
-      style={{
-        overflowX: "auto",
-        borderRadius: "8px",
-        border: "1px solid var(--border)"
-      }}
-    >
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr style={{ background: "rgba(0,212,255,0.04)" }}>
-            {["Metric", "Score", "Status"].map(h => (
-              <th
-                key={h}
-                style={{
-                  textAlign: "left",
-                  padding: "0.75rem 1rem",
-                  fontFamily: "var(--font-code)",
-                  fontSize: "11px",
-                  color: "var(--text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                  borderBottom: "1px solid var(--border)"
-                }}
-              >
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {entries.map(([metric, score]) => (
-            <tr
-              key={metric}
-              style={{ borderBottom: "1px solid rgba(0,212,255,0.05)" }}
-            >
-              <td
-                style={{
-                  padding: "0.7rem 1rem",
-                  fontFamily: "var(--font-code)",
-                  fontSize: "13px",
-                  color: "var(--text-primary)",
-                  textTransform: "capitalize"
-                }}
-              >
-                {metric}
-              </td>
-              <td
-                style={{
-                  padding: "0.7rem 1rem",
-                  fontFamily: "var(--font-display)",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  color: getScoreColor(score)
-                }}
-              >
-                {score}%
-              </td>
-              <td style={{ padding: "0.7rem 1rem" }}>
-                <span
-                  style={{
-                    fontFamily: "var(--font-code)",
-                    fontSize: "10px",
-                    padding: "2px 8px",
-                    borderRadius: "3px",
-                    background:
-                      score >= 85
-                        ? "rgba(16,185,129,0.1)"
-                        : score >= 70
-                        ? "rgba(245,158,11,0.1)"
-                        : "rgba(239,68,68,0.1)",
-                    color: getScoreColor(score),
-                    border: `1px solid ${getScoreColor(score)}44`
-                  }}
-                >
-                  {score >= 85 ? "STRONG" : score >= 70 ? "ACCEPTABLE" : "NEEDS WORK"}
-                </span>
-              </td>
-            </tr>
-          ))}
-          {latency && (
-            <tr>
-              <td
-                style={{
-                  padding: "0.7rem 1rem",
-                  fontFamily: "var(--font-code)",
-                  fontSize: "13px",
-                  color: "var(--text-primary)"
-                }}
-              >
-                Latency
-              </td>
-              <td
-                style={{
-                  padding: "0.7rem 1rem",
-                  fontFamily: "var(--font-display)",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  color: "var(--accent-primary)"
-                }}
-              >
-                {latency}
-              </td>
-              <td style={{ padding: "0.7rem 1rem" }}>
-                <span
-                  style={{
-                    fontFamily: "var(--font-code)",
-                    fontSize: "10px",
-                    padding: "2px 8px",
-                    borderRadius: "3px",
-                    background: "rgba(0,212,255,0.08)",
-                    color: "var(--accent-primary)",
-                    border: "1px solid rgba(0,212,255,0.2)"
-                  }}
-                >
-                  MEASURED
-                </span>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div className={s.metricRow}>
+        {nums.map(([k, v]) => (
+          <motion.div key={k} className={s.metricBox} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.4 }}>
+            <div className={s.metricNum} style={{ color: scoreColor(v) }}>{v}%</div>
+            <div className={s.metricKey}>{k}</div>
+          </motion.div>
+        ))}
+      </div>
+      {results.latency && (
+        <div style={{ background: "rgba(0,212,255,0.04)", border: "1px solid rgba(0,212,255,0.15)", borderRadius: 10, padding: "0.875rem 1.25rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span style={{ fontFamily: "var(--font-code)", fontSize: 12, color: "var(--text-muted)" }}>LATENCY</span>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 800, color: "var(--accent-primary)" }}>{results.latency}</span>
+        </div>
+      )}
     </div>
   );
 }
 
-function FailureGallery({ failures }: { failures: string[] }) {
-  const [open, setOpen] = useState(true);
-
+/* ─── Gallery ─── */
+function Gallery({ images, localVideo }: { images: string[]; localVideo?: string }) {
+  const [idx, setIdx] = useState(0);
+  const [lb, setLb] = useState<string | null>(null);
+  const prev = () => setIdx(i => (i - 1 + images.length) % images.length);
+  const next = () => setIdx(i => (i + 1) % images.length);
   return (
-    <div
-      className="glass-card"
-      style={{ overflow: "hidden" }}
-    >
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "1.25rem 1.5rem",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: "var(--text-primary)"
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "14px",
-            fontWeight: 700,
-            letterSpacing: "0.05em"
-          }}
-        >
-          Failure Analysis & Fixes
-        </span>
+    <>
+      <AnimatePresence>
+        {lb && (
+          <motion.div className={s.lightbox} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setLb(null)}>
+            <motion.div className={s.lightboxInner} initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} onClick={e => e.stopPropagation()}>
+              <Image src={lb} alt="Preview" width={1200} height={900} style={{ objectFit: "contain", width: "100%", height: "100%" }} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className={s.mainImage} onClick={() => setLb(images[idx])}>
+        <Image src={images[idx]} alt={`screenshot ${idx + 1}`} fill style={{ objectFit: "cover" }} priority />
+        <div className={s.imageOverlay} />
+        {images.length > 1 && <>
+          <button className={`${s.imgNav} ${s.imgNavLeft}`} onClick={e => { e.stopPropagation(); prev(); }}><ChevronLeft size={18} /></button>
+          <button className={`${s.imgNav} ${s.imgNavRight}`} onClick={e => { e.stopPropagation(); next(); }}><ChevronRight size={18} /></button>
+        </>}
+        <span className={s.imgCounter}>{idx + 1} / {images.length}</span>
+      </div>
+
+      {images.length > 1 && (
+        <div className={s.thumbRow}>
+          {images.map((img, i) => (
+            <div key={i} className={`${s.thumb} ${i === idx ? s.thumbActive : ""}`} onClick={() => setIdx(i)}>
+              <Image src={img} alt={`thumb ${i + 1}`} fill style={{ objectFit: "cover" }} />
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ─── Accordion ─── */
+function Accordion({ title, children }: { title: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className={s.accordion}>
+      <button className={s.accordionBtn} onClick={() => setOpen(o => !o)}>
+        <span>{title}</span>
         {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
       </button>
-
       <AnimatePresence>
         {open && (
-          <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: "auto" }}
-            exit={{ height: 0 }}
-            style={{ overflow: "hidden" }}
-          >
-            <div
-              style={{
-                padding: "0 1.5rem 1.5rem",
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.75rem"
-              }}
-            >
-              {failures.map((f, i) => (
-                <div
-                  key={i}
-                  style={{
-                    background: "rgba(239,68,68,0.05)",
-                    borderLeft: "3px solid rgba(239,68,68,0.4)",
-                    borderRadius: "0 6px 6px 0",
-                    padding: "0.75rem 1rem",
-                    fontFamily: "var(--font-code)",
-                    fontSize: "12px",
-                    color: "var(--text-muted)",
-                    lineHeight: 1.6
-                  }}
-                >
-                  <span style={{ color: "#ef4444", marginRight: "8px" }}>
-                    [{String(i + 1).padStart(2, "0")}]
-                  </span>
-                  {f}
-                </div>
-              ))}
-            </div>
+          <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} style={{ overflow: "hidden" }}>
+            <div className={s.accordionBody}>{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -229,441 +97,148 @@ function FailureGallery({ failures }: { failures: string[] }) {
   );
 }
 
-export default function ProjectDetailPage({
-  params
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+/* ─── Page ─── */
+export default function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const project = getProjectBySlug(slug) ?? null;
-  const [videoOpen, setVideoOpen] = useState(false);
+  const p = getProjectBySlug(slug);
 
-  if (!project) {
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "var(--text-muted)",
-          fontFamily: "var(--font-code)"
-        }}
-      >
-        Project not found.
-      </div>
-    );
-  }
+  if (!p) return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontFamily: "var(--font-code)" }}>
+      Project not found.
+    </div>
+  );
+
+  const hasMedia = p.images && p.images.length > 0;
+  const words = p.name.split(" ");
+  const lastWord = words.pop();
+  const rest = words.join(" ");
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4 }}
-      style={{
-        minHeight: "100vh",
-        background: "var(--bg-primary)",
-        paddingTop: "80px"
-      }}
-    >
-      <div
-        style={{ maxWidth: "900px", margin: "0 auto", padding: "3rem 2rem" }}
-      >
-        {/* Back button */}
-        <Link
-          href="/#projects"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "6px",
-            fontFamily: "var(--font-code)",
-            fontSize: "12px",
-            color: "var(--text-muted)",
-            textDecoration: "none",
-            marginBottom: "2.5rem",
-            transition: "color 0.2s ease"
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLAnchorElement).style.color = "var(--accent-primary)";
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-muted)";
-          }}
-        >
-          <ArrowLeft size={14} />
-          Back to portfolio
+    <motion.div className={s.page} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+      <div className={s.container}>
+
+        {/* Back */}
+        <Link href="/#projects" className={s.backBtn}>
+          <ArrowLeft size={14} /> Back to Projects
         </Link>
 
         {/* Hero */}
-        <div style={{ marginBottom: "2.5rem" }}>
-          <div
-            style={{
-              fontFamily: "var(--font-code)",
-              fontSize: "11px",
-              color: "var(--accent-secondary)",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              marginBottom: "0.75rem"
-            }}
-          >
-            {project.category}
-          </div>
-          <h1
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(1.75rem, 4vw, 3rem)",
-              fontWeight: 700,
-              color: "var(--text-primary)",
-              letterSpacing: "-0.02em",
-              marginBottom: "0.75rem",
-              lineHeight: 1.15
-            }}
-          >
-            {project.name}
+        <motion.div className={s.hero} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <div className={s.category}>{p.category}</div>
+          <h1 className={s.heroTitle}>
+            {rest} <span>{lastWord}</span>
           </h1>
-          <p
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "1.1rem",
-              color: "var(--text-muted)",
-              lineHeight: 1.6,
-              maxWidth: "600px"
-            }}
-          >
-            {project.tagline}
-          </p>
-        </div>
+          <p className={s.tagline}>{p.tagline}</p>
+          <div className={s.heroActions}>
+            <a href={p.github} target="_blank" rel="noopener noreferrer" className={s.btnPrimary}>
+              <Code2 size={15} /> View on GitHub
+            </a>
+            <Link href="/#projects" className={s.btnGhost}>
+              <ExternalLink size={15} /> All Projects
+            </Link>
+            {/* <a href={p.demoVideo} target="_blank" rel="noopener noreferrer" className={s.btnPrimary}>
+              <Code2 size={15} /> Demo Video
+            </a> */}
+          </div>
+        </motion.div>
 
-        {/* Quick stats bar */}
-        <div
-          className="glass-card"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: "1rem",
-            padding: "1.25rem",
-            marginBottom: "2.5rem",
-            textAlign: "center"
-          }}
-        >
+        {/* Stats bar */}
+        <motion.div className={s.statsGrid} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
           {[
-            { label: "Latency", value: project.stats.latency ?? "—" },
-            { label: "Eval Score", value: project.stats.evalScore ?? "—" },
-            { label: "Dataset Size", value: project.stats.datasetSize ?? "—" },
-            { label: "Cost/call", value: project.stats.costPerCall ?? "—" }
+            { label: "Eval Score", value: p.stats.evalScore ?? "—" },
+            { label: "Latency", value: p.stats.latency ?? "—" },
+            { label: "Dataset", value: p.stats.datasetSize ?? "—" },
+            { label: "Cost/call", value: p.stats.costPerCall ?? "—" },
           ].map(({ label, value }) => (
-            <div key={label}>
-              <div
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "1.1rem",
-                  fontWeight: 700,
-                  color: "var(--accent-primary)",
-                  marginBottom: "3px"
-                }}
-              >
-                {value}
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-code)",
-                  fontSize: "10px",
-                  color: "var(--text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.1em"
-                }}
-              >
-                {label}
-              </div>
+            <div key={label} className={s.statCard}>
+              <div className={s.statValue}>{value}</div>
+              <div className={s.statLabel}>{label}</div>
             </div>
           ))}
+        </motion.div>
 
-          <style>{`
-            @media (max-width: 640px) {
-              .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-            }
-          `}</style>
-        </div>
+        {/* Two-column body */}
+        <div className={s.mainGrid}>
 
-        {/* Full description */}
-        <div className="glass-card" style={{ padding: "1.75rem", marginBottom: "1.5rem" }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "14px",
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              color: "var(--text-primary)",
-              marginBottom: "1rem"
-            }}
-          >
-            System Overview
-          </h2>
-          {project.description.split("\n\n").map((para, i) => (
-            <p
-              key={i}
-              style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "0.95rem",
-                color: i === 0 ? "var(--text-primary)" : "var(--text-muted)",
-                lineHeight: 1.8,
-                marginBottom: "1rem"
-              }}
-            >
-              {para}
-            </p>
-          ))}
-        </div>
+          {/* LEFT — info */}
+          <div className={s.infoCol}>
 
-        {/* Architecture */}
-        <div
-          className="glass-card"
-          style={{
-            padding: "1.75rem",
-            marginBottom: "1.5rem",
-            background: "rgba(0,212,255,0.02)"
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "14px",
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              color: "var(--text-primary)",
-              marginBottom: "1rem"
-            }}
-          >
-            System Architecture
-          </h2>
-          {project.architectureDiagram ? (
-            <pre
-              style={{
-                fontFamily: "var(--font-code)",
-                fontSize: "12px",
-                color: "var(--accent-primary)",
-                lineHeight: 1.9,
-                overflowX: "auto",
-                padding: "1rem",
-                background: "rgba(0,212,255,0.04)",
-                borderRadius: "8px",
-                border: "1px solid var(--border)",
-                whiteSpace: "pre"
-              }}
-            >
-              {project.architectureDiagram}
-            </pre>
-          ) : (
-            <div
-              style={{
-                fontFamily: "var(--font-code)",
-                fontSize: "12px",
-                color: "var(--accent-primary)",
-                lineHeight: 1.8,
-                wordBreak: "break-word"
-              }}
-            >
-              {project.architecture}
-            </div>
-          )}
-        </div>
-
-        {/* Tech stack */}
-        <div className="glass-card" style={{ padding: "1.75rem", marginBottom: "1.5rem" }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "14px",
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              color: "var(--text-primary)",
-              marginBottom: "1rem"
-            }}
-          >
-            Tech Stack
-          </h2>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-            {project.tech.map(t => (
-              <span key={t} className="tech-badge">
-                {t}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Eval Results */}
-        <div className="glass-card" style={{ padding: "1.75rem", marginBottom: "1.5rem" }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "14px",
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              color: "var(--text-primary)",
-              marginBottom: "1rem"
-            }}
-          >
-            Evaluation Results
-          </h2>
-          <EvalTable results={project.evalResults} />
-          <p
-            style={{
-              fontFamily: "var(--font-code)",
-              fontSize: "10px",
-              color: "var(--text-muted)",
-              marginTop: "0.75rem"
-            }}
-          >
-            Green ≥ 85% · Yellow 70–84% · Red &lt; 70%
-          </p>
-        </div>
-
-        {/* Failure Gallery */}
-        <div style={{ marginBottom: "1.5rem" }}>
-          <FailureGallery failures={project.failureCases} />
-        </div>
-
-        {/* What I Learned */}
-        {project.whatILearned && project.whatILearned.length > 0 && (
-          <div className="glass-card" style={{ padding: "1.75rem", marginBottom: "1.5rem" }}>
-            <h2
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "14px",
-                fontWeight: 700,
-                letterSpacing: "0.05em",
-                color: "var(--text-primary)",
-                marginBottom: "1rem"
-              }}
-            >
-              What I Learned
-            </h2>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
-              {project.whatILearned.map((item, i) => (
-                <li
-                  key={i}
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    alignItems: "flex-start",
-                    fontFamily: "var(--font-body)",
-                    fontSize: "0.9rem",
-                    color: "var(--text-muted)",
-                    lineHeight: 1.6
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "var(--accent-primary)",
-                      fontFamily: "var(--font-code)",
-                      fontSize: "11px",
-                      marginTop: "3px",
-                      flexShrink: 0
-                    }}
-                  >
-                    [{String(i + 1).padStart(2, "0")}]
-                  </span>
-                  {item}
-                </li>
+            {/* Overview */}
+            <motion.div className={s.card} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+              <div className={s.cardTitle}>System Overview</div>
+              {p.description.split("\n\n").map((para, i) => (
+                <p key={i} style={{ fontFamily: "var(--font-body)", fontSize: "0.95rem", color: i === 0 ? "var(--text-primary)" : "var(--text-muted)", lineHeight: 1.85, marginBottom: "0.875rem" }}>{para}</p>
               ))}
-            </ul>
-          </div>
-        )}
+            </motion.div>
 
-        {/* Demo video */}
-        <div className="glass-card" style={{ padding: "1.75rem", marginBottom: "1.5rem" }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "14px",
-              fontWeight: 700,
-              letterSpacing: "0.05em",
-              color: "var(--text-primary)",
-              marginBottom: "1rem"
-            }}
-          >
-            Demo
-          </h2>
-          {project.slug === "face-mask-detection" ? (
-            <>
-              {videoOpen ? (
-                <div style={{ marginBottom: "2rem" }}>
-                  <FaceMaskDemo />
-                </div>
-              ) : (
-                <button
-                  onClick={() => setVideoOpen(true)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    padding: "10px 20px",
-                    borderRadius: "8px",
-                    background: "rgba(0,212,255,0.1)",
-                    border: "1px solid rgba(0,212,255,0.25)",
-                    color: "var(--accent-primary)",
-                    fontFamily: "var(--font-code)",
-                    fontSize: "12px",
-                    cursor: "pointer"
-                  }}
-                >
-                  <Play size={14} /> Open Live Demo
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              {videoOpen ? (
-                <div style={{ aspectRatio: "16/9", borderRadius: "8px", overflow: "hidden" }}>
-                  <iframe
-                    src={project.demoVideo}
-                    style={{ width: "100%", height: "100%", border: "none" }}
-                    allow="autoplay; encrypted-media"
-                    allowFullScreen
-                  />
-                </div>
-              ) : (
-                <button
-                  onClick={() => setVideoOpen(true)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    padding: "10px 20px",
-                    borderRadius: "8px",
-                    background: "rgba(0,212,255,0.1)",
-                    border: "1px solid rgba(0,212,255,0.25)",
-                    color: "var(--accent-primary)",
-                    fontFamily: "var(--font-code)",
-                    fontSize: "12px",
-                    cursor: "pointer"
-                  }}
-                >
-                  <Play size={14} /> Play Demo Video
-                </button>
-              )}
-            </>
+            {/* Architecture */}
+            <motion.div className={s.card} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.05 }}>
+              <div className={s.cardTitle}>Architecture</div>
+              {p.architectureDiagram
+                ? <pre className={s.archPre}>{p.architectureDiagram}</pre>
+                : <div style={{ fontFamily: "var(--font-code)", fontSize: 12, color: "var(--accent-primary)", lineHeight: 1.8 }}>{p.architecture}</div>}
+            </motion.div>
+
+            {/* Tech Stack */}
+            <motion.div className={s.card} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}>
+              <div className={s.cardTitle}>Tech Stack</div>
+              <div className={s.techRow}>{p.tech.map(t => <span key={t} className={s.techBadge}>{t}</span>)}</div>
+            </motion.div>
+
+            {/* Highlights */}
+            {p.highlights.length > 0 && (
+              <motion.div className={s.card} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}>
+                <div className={s.cardTitle}>Key Highlights</div>
+                {p.highlights.map((h, i) => (
+                  <div key={i} className={s.highlightItem}>
+                    <div className={s.highlightDot} />
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", color: "var(--text-muted)", lineHeight: 1.6 }}>{h}</span>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+
+            {/* Metrics */}
+            <motion.div className={s.card} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2 }}>
+              <div className={s.cardTitle}>Evaluation Metrics</div>
+              <Metrics results={p.evalResults} />
+            </motion.div>
+
+            {/* Failure Analysis */}
+            <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.25 }}>
+              <Accordion title="Failure Analysis & Fixes">
+                {p.failureCases.map((f, i) => (
+                  <div key={i} className={s.failureItem}>
+                    <span style={{ color: "#ef4444", marginRight: 8 }}>[{String(i + 1).padStart(2, "0")}]</span>{f}
+                  </div>
+                ))}
+              </Accordion>
+            </motion.div>
+
+            {/* What I Learned */}
+            {p.whatILearned && p.whatILearned.length > 0 && (
+              <motion.div className={s.card} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}>
+                <div className={s.cardTitle}>What I Learned</div>
+                {p.whatILearned.map((item, i) => (
+                  <div key={i} className={s.learnItem}>
+                    <span className={s.learnNum}>[{String(i + 1).padStart(2, "0")}]</span>
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", color: "var(--text-muted)", lineHeight: 1.7 }}>{item}</span>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </div>
+
+          {/* RIGHT — media */}
+          {hasMedia && (
+            <motion.div className={s.mediaCol} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+              <div className={s.card} style={{ padding: "1.25rem" }}>
+                <div className={s.cardTitle}>Project Preview</div>
+                <Gallery images={p.images!} localVideo={p.localVideo} />
+              </div>
+            </motion.div>
           )}
         </div>
-
-        {/* GitHub CTA */}
-        <a
-          href={project.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-primary"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            textDecoration: "none",
-            marginBottom: "4rem"
-          }}
-        >
-          <Code2 size={16} />
-          View on GitHub
-        </a>
       </div>
     </motion.div>
   );

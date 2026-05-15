@@ -31,6 +31,8 @@ export interface Project {
   };
   isResearch?: boolean;
   category: string;
+  images?: string[];
+  localVideo?: string;
 }
 
 export const projects: Project[] = [
@@ -115,7 +117,13 @@ The result is a production-quality blog post with a one-click Markdown download 
       costPerCall: "~$0.00 (Groq)"
     },
     category: "Agents & Tools",
-    isResearch: false
+    isResearch: false,
+    images: [
+      "/projects/AI_Blog_Writing_Agent/image1.png",
+      "/projects/AI_Blog_Writing_Agent/image2.png",
+      "/projects/AI_Blog_Writing_Agent/image3.png",
+      "/projects/AI_Blog_Writing_Agent/langsmith.png"
+    ]
   },
   {
     slug: "face-mask-detection",
@@ -178,7 +186,156 @@ Output (Annotated Image / Video / Stream)`,
       datasetSize: "9,525 images",
       costPerCall: "On-device"
     },
-    category: "Computer Vision"
+    category: "Computer Vision",
+    images: [
+      "/projects/Face_Mask_Detection_System/image.png",
+      "/projects/Face_Mask_Detection_System/image1.png",
+      "/projects/Face_Mask_Detection_System/image2.png",
+      "/projects/Face_Mask_Detection_System/image3.png",
+      "/projects/Face_Mask_Detection_System/image4.png",
+      "/projects/Face_Mask_Detection_System/image5.png",
+      "/projects/Face_Mask_Detection_System/image6.png",
+      "/projects/Face_Mask_Detection_System/image7.png"
+    ],
+    localVideo: "/projects/Face_Mask_Detection_System/detected_video.mp4"
+  },
+  {
+    slug: "duplicate-question-pair",
+    name: "Duplicate Question Pair Detector",
+    tagline: "NLP and machine learning model to detect semantically identical questions with 0.84 F1-score",
+    description: `A Duplicate Question Pair Detector built using Natural Language Processing (NLP) and machine learning. The system is designed to predict if two distinct questions have the same underlying meaning or intent. It efficiently handles a dataset of over 30,000 question pairs.
+
+The project involved extensive feature engineering, applying word embeddings to capture semantic relationships, and optimizing data processing for environments with limited hardware resources.
+
+The final model achieves an F1-score of 0.84 and is deployed as an interactive web application using FastAPI, containerized with Docker for seamless distribution and deployment.`,
+    tech: ["NLP", "Machine Learning", "FastAPI", "Docker", "Python", "Feature Engineering", "Word Embeddings"],
+    demoVideo: "",
+    github: "https://github.com/onkarshinde77",
+    complexity: 2,
+    highlights: [
+      "Trained on a dataset of 30,000+ question pairs",
+      "Achieved an F1-score of 0.84 for semantic similarity detection",
+      "Implemented advanced NLP feature engineering and word embeddings",
+      "Optimized data processing pipeline for limited hardware environments",
+      "Deployed as a containerized web application using FastAPI and Docker"
+    ],
+    architectureDiagram: `Input Question Pair
+        ↓
+NLP Preprocessing (Tokenization, Stopwords)
+        ↓
+Feature Engineering (Word Embeddings)
+        ↓
+Machine Learning Classifier
+        ↓
+Prediction (Duplicate / Not Duplicate)
+        ↓
+FastAPI Web Interface`,
+    architecture: "Input Text → Preprocessing → Word Embeddings / Feature Extraction → ML Model Prediction → FastAPI Response",
+    evalResults: {
+      f1: 84,
+      latency: "real-time"
+    },
+    failureCases: [
+      "Struggled with highly domain-specific vocabulary — mitigated by expanding word embeddings corpus",
+      "Memory constraints during dataset loading — resolved by chunking and optimizing data processing pipelines"
+    ],
+    whatILearned: [
+      "NLP Feature Engineering — extracting meaningful numerical features from text data",
+      "Word Embeddings — using semantic vector representations for text classification",
+      "FastAPI Development — building highly performant async REST APIs in Python",
+      "Docker Containerization — packaging ML models and APIs for reproducible deployments",
+      "Resource Optimization — processing large datasets efficiently on limited hardware"
+    ],
+    stats: {
+      latency: "Real-time",
+      evalScore: "0.84 F1-score",
+      datasetSize: "30,000+ pairs",
+      costPerCall: "On-device"
+    },
+    category: "NLP"
+  },
+  {
+    slug: "collision-detection-robot",
+    name: "Collision Detection Robot",
+    tagline: "Autonomous obstacle-avoidance robot using ultrasonic sensing and real-time motor control — exhibited at Cummins & PICT College of Engineering",
+    description: `An autonomous collision detection and avoidance robot built from scratch using Arduino Uno, ultrasonic sensors, and a dual-channel motor driver. The robot continuously scans its surroundings and intelligently navigates around obstacles in real time without any human intervention.
+
+The system uses an HC-SR04 ultrasonic sensor mounted at the front to emit sonar pulses and measure the time-of-flight of reflected signals. When an obstacle is detected within 20 cm, the microcontroller halts forward motion, activates a buzzer alert, and triggers reverse-and-turn maneuvers before resuming normal navigation.
+
+The project was selected for exhibition at two prestigious engineering college events — Cummins College of Engineering (April 2025) and PICT College of Engineering (March 2025) — where it attracted significant interest from students and faculty for its clean engineering and real-world applicability.`,
+    tech: ["Arduino Uno", "C/C++", "HC-SR04 Ultrasonic Sensor", "L298N Motor Driver", "Li-ion Battery", "Gear Motors", "LEDs", "Buzzer"],
+    demoVideo: "",
+    github: "https://github.com/onkarshinde77",
+    complexity: 2,
+    highlights: [
+      "Real-time obstacle detection within 20 cm using ultrasonic time-of-flight sensing",
+      "Autonomous reverse-and-turn avoidance maneuver triggered on detection",
+      "Dual-channel L298N motor driver controls 4 gear motors independently",
+      "Buzzer + LED alert system for visual and audible collision warning",
+      "Li-ion battery powered — fully wireless and portable",
+      "Exhibited at Cummins College of Engineering (April 2025)",
+      "Exhibited at PICT College of Engineering (March 2025)"
+    ],
+    architectureDiagram: `  ┌──────────────────────────────┐
+  │      HC-SR04 Ultrasonic      │
+  │   Trigger → Pulse → Echo     │
+  └─────────────┬────────────────┘
+                │ Distance (cm)
+  ┌─────────────▼────────────────┐
+  │         Arduino Uno          │
+  │   distance < 20cm?           │
+  │   YES → STOP + ALERT + TURN  │
+  │   NO  → FORWARD              │
+  └──────┬──────────┬────────────┘
+         │          │
+  ┌──────▼──┐  ┌────▼───────┐
+  │  L298N  │  │ Buzzer+LED │
+  │ Motor   │  │  Alert     │
+  │ Driver  │  └────────────┘
+  └──┬───┬──┘
+     │   │
+  ┌──▼─┐ ┌▼───┐
+  │ M1 │ │ M2 │  ← Gear Motors (x4)
+  └────┘ └────┘`,
+    architecture: "Ultrasonic Sensor → Time-of-Flight Measurement → Arduino Uno Decision Logic → L298N Motor Driver → 4x Gear Motors + Buzzer/LED Alerts",
+    evalResults: {
+      accuracy: 95,
+      latency: "< 50ms response"
+    },
+    failureCases: [
+      "False triggers from angled surfaces — resolved by averaging 3 consecutive readings before acting",
+      "Motor jitter at low battery — fixed by adding a dedicated Li-ion power regulation stage",
+      "Sensor blind spots on the sides — mitigated by programming wider turn arcs"
+    ],
+    whatILearned: [
+      "Embedded Systems Programming — writing low-level C/C++ for Arduino microcontroller",
+      "Ultrasonic Sensing — understanding time-of-flight physics and implementing echo-based distance calculation",
+      "Motor Control — using PWM signals through L298N to control speed and direction of DC gear motors",
+      "Circuit Design — integrating multiple components (sensors, driver ICs, batteries) in a stable circuit",
+      "Real-world Hardware Debugging — diagnosing and fixing issues in live embedded systems",
+      "Exhibition Presentation — explaining technical concepts to non-technical audiences at college events"
+    ],
+    stats: {
+      latency: "< 50ms",
+      evalScore: "95% accuracy",
+      datasetSize: "Real-world",
+      costPerCall: "On-device"
+    },
+    isResearch: false,
+    category: "Embedded Systems",
+    images: [
+      "/projects/collision_detection/prototype/IMG20250217210559.jpg",
+      "/projects/collision_detection/prototype/IMG20250221162448.jpg",
+      "/projects/collision_detection/colleges/CUMMINS/IMG20250404154827.jpg",
+      "/projects/collision_detection/colleges/CUMMINS/IMG20250404160016.jpg",
+      "/projects/collision_detection/colleges/CUMMINS/IMG20250404160021.jpg",
+      "/projects/collision_detection/colleges/CUMMINS/IMG20250404160035.jpg",
+      "/projects/collision_detection/colleges/CUMMINS/IMG20250404171726.jpg",
+      "/projects/collision_detection/colleges/CUMMINS/IMG20250404172059.jpg",
+      "/projects/collision_detection/colleges/PICT/IMG20250322131715.jpg",
+      "/projects/collision_detection/colleges/PICT/IMG20250322131740.jpg",
+      "/projects/collision_detection/colleges/PICT/IMG20250322131742.jpg"
+    ]
   }
 ];
 

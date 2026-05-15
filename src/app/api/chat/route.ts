@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { knowledgeBase } from "@/data/knowledge-base";
 
 interface Message {
   role: "user" | "assistant";
@@ -20,40 +21,17 @@ export async function POST(req: NextRequest) {
     }
 
     // Check for required env vars
-    const anthropicKey = process.env.ANTHROPIC_API_KEY;
-    const pineconeKey = process.env.PINECONE_API_KEY;
-    const openaiKey = process.env.OPENAI_API_KEY;
+    const groqKey = process.env.GROQ_API_KEY;
 
-    // If no API keys, use fallback mode
-    if (!anthropicKey || !pineconeKey || !openaiKey) {
+    // If no Groq API key, use fallback mode
+    if (!groqKey) {
       return fallbackResponse(message);
     }
 
-    // 1. Embed user query
-    const { OpenAI } = await import("openai");
-    const openai = new OpenAI({ apiKey: openaiKey });
-
-    const embeddingRes = await openai.embeddings.create({
-      model: "text-embedding-3-small",
-      input: message
-    });
-    const queryVector = embeddingRes.data[0].embedding;
-
-    // 2. Query Pinecone
-    const { Pinecone } = await import("@pinecone-database/pinecone");
-    const pinecone = new Pinecone({ apiKey: pineconeKey });
-    const indexName = process.env.PINECONE_INDEX ?? "portfolio-kb";
-    const index = pinecone.index(indexName);
-
-    const queryResult = await index.query({
-      vector: queryVector,
-      topK: 5,
-      includeMetadata: true
-    });
-
-    const contextChunks = queryResult.matches
-      ?.map(m => m.metadata?.content as string)
-      .filter(Boolean)
+    // Since the knowledge base is small, we load it directly into context 
+    // instead of using a paid vector database!
+    const contextChunks = knowledgeBase
+      .map(chunk => chunk.content)
       .join("\n\n---\n\n");
 
     // 3. Build system prompt with context
@@ -73,15 +51,18 @@ Guidelines:
 - Respond in a friendly, professional tone
 - Do not make up projects, scores, or technical details`;
 
-    // 4. Stream response from Claude
-    const { default: Anthropic } = await import("@anthropic-ai/sdk");
-    const anthropic = new Anthropic({ apiKey: anthropicKey });
+    // 4. Stream response from Groq
+    const { OpenAI } = await import("openai");
+    const groq = new OpenAI({ 
+      apiKey: groqKey,
+      baseURL: "https://api.groq.com/openai/v1"
+    });
 
-    const stream = await anthropic.messages.stream({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1024,
-      system: systemPrompt,
+    const stream = await groq.chat.completions.create({
+      model: "llama-3.1-8b-instant",
+      stream: true,
       messages: [
+        { role: "system", content: systemPrompt },
         ...history.slice(-8).map(m => ({
           role: m.role as "user" | "assistant",
           content: m.content
@@ -94,12 +75,10 @@ Guidelines:
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
       async start(controller) {
-        for await (const event of stream) {
-          if (
-            event.type === "content_block_delta" &&
-            event.delta.type === "text_delta"
-          ) {
-            const data = JSON.stringify({ text: event.delta.text });
+        for await (const chunk of stream) {
+          const text = chunk.choices[0]?.delta?.content || "";
+          if (text) {
+            const data = JSON.stringify({ text });
             controller.enqueue(encoder.encode(`data: ${data}\n\n`));
           }
         }
