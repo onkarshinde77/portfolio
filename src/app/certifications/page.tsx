@@ -1,7 +1,77 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 import Image from "next/image";
+
+/* ─── Lightbox ─── */
+function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,0.95)",
+        zIndex: 9999,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
+        cursor: "zoom-out"
+      }}
+    >
+      <button 
+        onClick={onClose}
+        style={{
+          position: "fixed",
+          top: "1.5rem",
+          right: "1.5rem",
+          background: "rgba(255,255,255,0.06)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          color: "#fff",
+          borderRadius: "50%",
+          width: "40px",
+          height: "40px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          fontSize: "18px",
+          transition: "all 0.2s",
+          zIndex: 10000
+        }}
+      >
+        <X size={18} />
+      </button>
+      <motion.div
+        initial={{ scale: 0.88, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.88, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 28 }}
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: "90vw",
+          height: "88vh",
+          borderRadius: "14px",
+          overflow: "hidden",
+          boxShadow: "0 0 80px rgba(124,58,237,0.15)",
+          background: "#000",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative"
+        }}
+      >
+        <Image src={src} alt="Full view" width={1600} height={1100} style={{ objectFit: "contain", width: "100%", height: "100%" }} />
+      </motion.div>
+    </motion.div>
+  );
+}
 
 const certificates = [
   { file: "35.png", name: "Achievement Certificate", type: "image", platform: "Verified Credential" },
@@ -17,6 +87,11 @@ const certificates = [
 ];
 
 export default function CertificationsPage() {
+  const [lbSrc, setLbSrc] = useState<string | null>(null);
+
+  const open = (src: string) => setLbSrc(src);
+  const close = () => setLbSrc(null);
+
   return (
     <main
       style={{
@@ -27,6 +102,10 @@ export default function CertificationsPage() {
         alignItems: "center"
       }}
     >
+      <AnimatePresence>
+        {lbSrc && <Lightbox src={lbSrc} onClose={close} />}
+      </AnimatePresence>
+
       <div style={{ maxWidth: "1200px", width: "100%" }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -54,11 +133,9 @@ export default function CertificationsPage() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "2rem" }}>
           {certificates.map((cert, index) => (
-            <motion.a
+            <motion.div
               key={cert.file}
-              href={`/certificates/${cert.file}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => open(`/certificates/${cert.file}`)}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.05 }}
@@ -131,7 +208,7 @@ export default function CertificationsPage() {
                   </p>
                 </div>
               </div>
-            </motion.a>
+            </motion.div>
           ))}
         </div>
       </div>

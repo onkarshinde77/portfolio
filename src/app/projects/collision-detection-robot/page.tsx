@@ -215,7 +215,7 @@ export default function CollisionDetectionPage() {
                 <div className={`${s.galleryGrid} ${s.galleryGrid2}`}>
                   {prototypeImages.map((img, i) => (
                     <div key={i} className={`${s.galleryItem} ${s.galleryItemStatic} ${s.wide}`}>
-                      <Image src={img} alt="Prototype" fill style={{ objectFit: "cover" }} />
+                      <Image src={img} alt="Prototype" fill style={{ objectFit: "contain", width: "100%", height: "100%" }} />
                       <div className={s.galleryOverlay}>
                         <div className={s.galleryOverlayText}>PROTOTYPE BUILD</div>
                       </div>
@@ -246,7 +246,7 @@ export default function CollisionDetectionPage() {
               <div className={`${s.galleryGrid} ${s.galleryGrid3}`}>
                 {cumminsImages.map((img, i) => (
                   <div key={i} className={`${s.galleryItem} ${i % 3 === 0 ? s.wide : s.square}`}>
-                    <Image src={img} alt="Cummins Exhibition" fill style={{ objectFit: "cover" }} />
+                    <Image src={img} alt="Cummins Exhibition" fill style={{ objectFit: "contain", width: "100%", height: "100%" }} />
                     <div className={s.galleryOverlay}>
                       <div className={s.galleryOverlayText}>CUMMINS EVENT</div>
                     </div>
@@ -269,7 +269,7 @@ export default function CollisionDetectionPage() {
               <div className={`${s.galleryGrid} ${s.galleryGrid3}`}>
                 {pictImages.map((img, i) => (
                   <div key={i} className={`${s.galleryItem} ${s.wide}`}>
-                    <Image src={img} alt="PICT Exhibition" fill style={{ objectFit: "cover" }} />
+                    <Image src={img} alt="PICT Exhibition" fill style={{ objectFit: "contain", width: "100%", height: "100%" }} />
                     <div className={s.galleryOverlay}>
                       <div className={s.galleryOverlayText}>PICT SYMPOSIUM</div>
                     </div>

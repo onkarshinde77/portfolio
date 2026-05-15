@@ -55,7 +55,7 @@ function Gallery({ images, localVideo }: { images: string[]; localVideo?: string
       </AnimatePresence>
 
       <div className={s.mainImage} onClick={() => setLb(images[idx])}>
-        <Image src={images[idx]} alt={`screenshot ${idx + 1}`} fill style={{ objectFit: "cover" }} priority />
+        <Image src={images[idx]} alt={`screenshot ${idx + 1}`} fill style={{ objectFit: "contain", width: "100%", height: "100%" }} priority />
         <div className={s.imageOverlay} />
         {images.length > 1 && <>
           <button className={`${s.imgNav} ${s.imgNavLeft}`} onClick={e => { e.stopPropagation(); prev(); }}><ChevronLeft size={18} /></button>
@@ -68,7 +68,7 @@ function Gallery({ images, localVideo }: { images: string[]; localVideo?: string
         <div className={s.thumbRow}>
           {images.map((img, i) => (
             <div key={i} className={`${s.thumb} ${i === idx ? s.thumbActive : ""}`} onClick={() => setIdx(i)}>
-              <Image src={img} alt={`thumb ${i + 1}`} fill style={{ objectFit: "cover" }} />
+              <Image src={img} alt={`thumb ${i + 1}`} fill style={{ objectFit: "contain", width: "100%", height: "100%" }} />
             </div>
           ))}
         </div>
