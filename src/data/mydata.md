@@ -19,12 +19,13 @@ College Name: D Y Patil College of Engineering Akurdi, Pune
 University: Savitribai Phule Pune University (SPPU)
 Degree: B.E. Artificial Intelligence and Data Science
 Current Year: Forth Year(7th SEM) (2023-2027)
-CGPA: 8.34
+CGPA: 8
 ---
 
 # SKILLS
 
 ## Programming Languages
+- Java
 - Python
 - SQL
 - HTML
@@ -50,8 +51,6 @@ CGPA: 8.34
 - Matplotlib & Seaborn
 - Flask & FastAPI
 - Django
-- Express & Node.js
-- React
 
 ## Tools
 - Git & GitHub

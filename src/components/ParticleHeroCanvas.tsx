@@ -208,9 +208,9 @@ const Particles = () => {
       { value: 0 },
       {
         value: 1,
-        duration: 3.5,
+        duration: 1.5,
         ease: "power2.inOut",
-        delay: 0.1
+        delay: 0
       }
     );
   }, []);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { knowledgeBase } from "@/data/knowledge-base";
+import fs from "fs";
+import path from "path";
 
 interface Message {
   role: "user" | "assistant";
@@ -20,38 +21,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
-    // Check for required env vars
     const groqKey = process.env.GROQ_API_KEY;
 
-    // If no Groq API key, use fallback mode
     if (!groqKey) {
-      return fallbackResponse(message);
+      return NextResponse.json({ error: "API key is not configured. Please set GROQ_API_KEY." }, { status: 500 });
     }
 
-    // Since the knowledge base is small, we load it directly into context 
-    // instead of using a paid vector database!
-    const contextChunks = knowledgeBase
-      .map(chunk => chunk.content)
-      .join("\n\n---\n\n");
+    // Read mydata.md for RAG context
+    const mydataPath = path.join(process.cwd(), "src", "data", "mydata.md");
+    let mydataContent = "";
+    try {
+      mydataContent = fs.readFileSync(mydataPath, "utf8");
+    } catch (e) {
+      console.error("Could not read mydata.md", e);
+      mydataContent = "No specific context found.";
+    }
 
-    // 3. Build system prompt with context
-    const systemPrompt = `You are an AI assistant embedded in Onkar Shinde's portfolio website. Your job is to answer questions about Onkar — his projects, skills, background, and how to contact him. Be helpful, concise, and accurate.
-
-Use the following context retrieved from Onkar's knowledge base:
+    const systemPrompt = `You are a strict, helpful AI assistant embedded in Onkar Shinde's portfolio website. 
+Your ONLY job is to answer questions about Onkar using EXACTLY and ONLY the provided context from his markdown file.
 
 <context>
-${contextChunks || "No specific context found. Use general knowledge about the portfolio."}
+${mydataContent}
 </context>
 
 Guidelines:
-- Answer only based on the context provided and what you know about the portfolio
-- Be concise but complete
-- If asked for links (GitHub, LinkedIn, etc.), provide them from the context
-- If you don't know something, say so clearly
-- Respond in a friendly, professional tone
-- Do not make up projects, scores, or technical details`;
+- If the answer is NOT in the context, politely reply: "I'm sorry, but I can only provide information that is explicitly stated in my knowledge base. For more details, please contact Onkar directly."
+- DO NOT use any outside knowledge. DO NOT hallucinate details, projects, or statistics.
+- DO NOT answer general questions (e.g., "what is AI?", "write a poem") unless it directly relates to Onkar's profile.
+- Answer according to the question asked, referencing the specific data provided.
+- Be concise, professional, and friendly.
+- Format the response using markdown where appropriate (bolding, lists, etc).`;
 
-    // 4. Stream response from Groq
     const { OpenAI } = await import("openai");
     const groq = new OpenAI({ 
       apiKey: groqKey,
@@ -71,7 +71,6 @@ Guidelines:
       ]
     });
 
-    // 5. Return SSE stream
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
       async start(controller) {
@@ -101,49 +100,4 @@ Guidelines:
       { status: 500 }
     );
   }
-}
-
-function fallbackResponse(message: string): NextResponse {
-  const lower = message.toLowerCase();
-
-  let response = "";
-
-  if (lower.includes("project") || lower.includes("built") || lower.includes("system")) {
-    response =
-      "Onkar has built 6 production-grade AI systems including: **Multi-Hop QA System** (87% faithfulness), **Domain-Adaptive Fine-Tuning Pipeline** (LoRA/QLoRA on Llama-3/Mistral), **ReAct Agent Framework** (multi-agent orchestration), **Semantic Search Engine** (1M+ docs, sub-100ms), **LLM Eval Harness** (15+ metrics), and a **Lightweight MLOps Platform**. Each ships with a custom eval harness.";
-  } else if (lower.includes("stack") || lower.includes("tech") || lower.includes("skill")) {
-    response =
-      "Onkar's core stack: **LLMs** (OpenAI GPT-4, Anthropic Claude, Llama, Mistral), **RAG** (Pinecone, Weaviate, LangChain), **Fine-tuning** (PEFT/LoRA, PyTorch, FSDP, DeepSpeed), **MLOps** (W&B, Docker, FastAPI, vLLM), **Frontend** (Next.js, TypeScript), **Infra** (AWS, GCP, GitHub Actions).";
-  } else if (lower.includes("resume") || lower.includes("cv") || lower.includes("download")) {
-    response =
-      "You can download Onkar's resume at `/resume.pdf` or click the **Download Resume** button in the Contact section. He is a second-year B.E. AI & Data Science student at DY Patil College of Engineering Akurdi, Pune (2023-2027), GPA 8.34. Available for internships now.";
-  } else if (lower.includes("contact") || lower.includes("email") || lower.includes("reach")) {
-    response =
-      "You can reach Onkar at **onkarshinde.ai@gmail.com**, or connect on [GitHub](https://github.com/onkarshinde77), [LinkedIn](https://linkedin.com/in/onkarshinde77), or [HuggingFace](https://huggingface.co/onkarshinde77). He typically responds within 24 hours.";
-  } else {
-    response =
-      "I'm Onkar's AI assistant. I can tell you about his **projects** (RAG systems, fine-tuning pipelines, agent frameworks), **tech stack** (PyTorch, LangChain, Pinecone, Next.js), how to **contact him**, or where to find his **resume**. What would you like to know?";
-  }
-
-  const encoder = new TextEncoder();
-  const words = response.split(" ");
-  const readable = new ReadableStream({
-    async start(controller) {
-      for (const word of words) {
-        await new Promise(r => setTimeout(r, 30));
-        const data = JSON.stringify({ text: word + " " });
-        controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-      }
-      controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-      controller.close();
-    }
-  });
-
-  return new NextResponse(readable, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive"
-    }
-  });
 }
