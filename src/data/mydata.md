@@ -64,7 +64,7 @@ CGPA: 8
 # PROJECTS
 
 ## Total Projects
-15
+8
 
 ---
 
