@@ -81,7 +81,7 @@ export default function CollisionDetectionPage() {
 
         {/* ─── TWO-COLUMN MAIN ─── */}
         <div className={s.grid2}>
-          
+
           {/* LEFT: Info */}
           <div className={s.colLeft}>
             {/* Overview */}
@@ -171,7 +171,7 @@ export default function CollisionDetectionPage() {
 
           {/* RIGHT: Visuals & Logic Flow */}
           <div className={s.colRight}>
-            
+
             {/* Robot Animation / Logic Visualization */}
             <motion.div className={s.card} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
               <div className={s.cardTitle}>Live Sonar Detection Flow</div>
