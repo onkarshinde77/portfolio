@@ -121,7 +121,7 @@ const Particles = () => {
   const mouseRef = useRef(new THREE.Vector2(-10, -10)); // Start far off-screen
 
   // Determine aspect ratio from texture
-  const aspect = texture.image ? texture.image.width / texture.image.height : 1.0;
+  const aspect = texture.image ? (texture.image as any).width / (texture.image as any).height : 1.0;
 
   // Position offset (right side for desktop, center for mobile)
   const isMobile = viewport.width < 10;
