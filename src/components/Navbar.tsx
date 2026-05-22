@@ -130,40 +130,6 @@ export function Navbar() {
           RAG · {ragStatus}
         </div>
 
-        {/* Cmd+K hint */}
-        <button
-          onClick={() =>
-            window.dispatchEvent(new CustomEvent("open-command-palette"))
-          }
-          style={{
-            background: "rgba(0, 212, 255, 0.06)",
-            border: "1px solid var(--border)",
-            borderRadius: "6px",
-            padding: "4px 10px",
-            fontFamily: "var(--font-code)",
-            fontSize: "11px",
-            color: "var(--text-muted)",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
-            transition: "all 0.2s ease"
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor =
-              "rgba(0,212,255,0.3)";
-            (e.currentTarget as HTMLButtonElement).style.color =
-              "var(--accent-primary)";
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor =
-              "var(--border)";
-            (e.currentTarget as HTMLButtonElement).style.color =
-              "var(--text-muted)";
-          }}
-        >
-          ⌘K
-        </button>
       </div>
 
       <style>{`

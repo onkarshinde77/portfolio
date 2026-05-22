@@ -200,61 +200,6 @@ Output (Annotated Image / Video / Stream)`,
     localVideo: "/projects/Face_Mask_Detection_System/detected_video.mp4"
   },
   {
-    slug: "duplicate-question-pair",
-    name: "Duplicate Question Pair Detector",
-    tagline: "NLP and machine learning model to detect semantically identical questions with 0.84 F1-score",
-    description: `A Duplicate Question Pair Detector built using Natural Language Processing (NLP) and machine learning. The system is designed to predict if two distinct questions have the same underlying meaning or intent. It efficiently handles a dataset of over 30,000 question pairs.
-
-The project involved extensive feature engineering, applying word embeddings to capture semantic relationships, and optimizing data processing for environments with limited hardware resources.
-
-The final model achieves an F1-score of 0.84 and is deployed as an interactive web application using FastAPI, containerized with Docker for seamless distribution and deployment.`,
-    tech: ["NLP", "Machine Learning", "FastAPI", "Docker", "Python", "Feature Engineering", "Word Embeddings"],
-    demoVideo: "",
-    github: "https://github.com/onkarshinde77",
-    complexity: 2,
-    highlights: [
-      "Trained on a dataset of 30,000+ question pairs",
-      "Achieved an F1-score of 0.84 for semantic similarity detection",
-      "Implemented advanced NLP feature engineering and word embeddings",
-      "Optimized data processing pipeline for limited hardware environments",
-      "Deployed as a containerized web application using FastAPI and Docker"
-    ],
-    architectureDiagram: `Input Question Pair
-        ↓
-NLP Preprocessing (Tokenization, Stopwords)
-        ↓
-Feature Engineering (Word Embeddings)
-        ↓
-Machine Learning Classifier
-        ↓
-Prediction (Duplicate / Not Duplicate)
-        ↓
-FastAPI Web Interface`,
-    architecture: "Input Text → Preprocessing → Word Embeddings / Feature Extraction → ML Model Prediction → FastAPI Response",
-    evalResults: {
-      f1: 84,
-      latency: "real-time"
-    },
-    failureCases: [
-      "Struggled with highly domain-specific vocabulary — mitigated by expanding word embeddings corpus",
-      "Memory constraints during dataset loading — resolved by chunking and optimizing data processing pipelines"
-    ],
-    whatILearned: [
-      "NLP Feature Engineering — extracting meaningful numerical features from text data",
-      "Word Embeddings — using semantic vector representations for text classification",
-      "FastAPI Development — building highly performant async REST APIs in Python",
-      "Docker Containerization — packaging ML models and APIs for reproducible deployments",
-      "Resource Optimization — processing large datasets efficiently on limited hardware"
-    ],
-    stats: {
-      latency: "Real-time",
-      evalScore: "0.84 F1-score",
-      datasetSize: "30,000+ pairs",
-      costPerCall: "On-device"
-    },
-    category: "NLP"
-  },
-  {
     slug: "collision-detection-robot",
     name: "Collision Detection Robot",
     tagline: "Autonomous obstacle-avoidance robot using ultrasonic sensing and real-time motor control — exhibited at Cummins & PICT College of Engineering",

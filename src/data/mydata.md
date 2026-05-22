@@ -64,7 +64,7 @@ CGPA: 8
 # PROJECTS
 
 ## Total Projects
-8
+7
 
 ---
 
@@ -138,35 +138,6 @@ https://github.com/onkarshinde77/face_mask_detector
 ## Project 3
 
 ### Project Name
-Duplicate Question Pair Detector
-
-### Description
-An NLP and machine learning model designed to detect semantically identical questions with an F1-score of 0.84. Built to predict if two distinct questions have the same underlying meaning or intent. It handles a dataset of over 30,000 question pairs. Involved extensive feature engineering and applying word embeddings to capture semantic relationships. Deployed as an interactive web application using FastAPI and containerized with Docker.
-
-### Technologies Used
-- NLP (Feature Engineering & Word Embeddings)
-- Machine Learning
-- FastAPI
-- Docker
-- Python
-
-### Features
-- Trained on a dataset of 30,000+ question pairs
-- Achieved an F1-score of 0.84 for semantic similarity detection
-- Optimized data processing pipeline for limited hardware environments
-- Deployed as a containerized web application
-
-### Status
-Completed
-
-### GitHub Link
-https://github.com/onkarshinde77
-
----
-
-## Project 4
-
-### Project Name
 Collision Detection Robot
 
 ### Description
@@ -195,7 +166,7 @@ https://github.com/onkarshinde77
 
 ---
 
-## Project 5
+## Project 4
 
 ### Project Name
 RAG Document Q&A System
@@ -223,7 +194,7 @@ https://github.com/onkarshinde77/rag-document-qna
 
 ---
 
-## Project 6
+## Project 5
 
 ### Project Name
 NLP Sentiment Analysis Pipeline
@@ -250,7 +221,7 @@ https://github.com/onkarshinde77/sentiment-analysis
 
 ---
 
-## Project 7
+## Project 6
 
 ### Project Name
 Data Analytics Platform
@@ -278,7 +249,7 @@ https://github.com/onkarshinde77/data-analytics-platform
 
 ---
 
-## Project 8
+## Project 7
 
 ### Project Name
 AI-Powered Civic Issue Reporter

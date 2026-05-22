@@ -66,7 +66,7 @@ GitHub Link:
 - Be concise, professional, and friendly.`;
 
     const { OpenAI } = await import("openai");
-    const groq = new OpenAI({ 
+    const groq = new OpenAI({
       apiKey: groqKey,
       baseURL: "https://api.groq.com/openai/v1"
     });
