@@ -25,7 +25,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
         cursor: "zoom-out"
       }}
     >
-      <button 
+      <button
         onClick={onClose}
         style={{
           position: "fixed",
@@ -80,7 +80,7 @@ const certificates = [
   { file: "Onkar_Appasahaheb_Shinde.png", name: "Python / Data Science", type: "image", platform: "Verified Credential" },
   { file: "CPMC.png", name: "Technical Certification", type: "image", platform: "Verified Credential" },
   { file: "certificate_Shinde onkar .png", name: "Skill Certification", type: "image", platform: "Verified Credential" },
-  { file: "jspm.jfif", name: "JSPM", type: "image", platform: "Institution" },
+  { file: "jspm.jpg", name: "JSPM", type: "image", platform: "Institution" },
   { file: "DSA_completion.jpg", name: "DSA Completion", type: "image", platform: "Course Certificate" },
   { file: "NVIDIA.jpg", name: "NVIDIA DLI", type: "image", platform: "NVIDIA" },
   { file: "SQL.jpg", name: "SQL Intermediate", type: "image", platform: "HackerRank" },
