@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Bot, Sparkles } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Message {
   role: "user" | "assistant";
@@ -10,10 +12,9 @@ interface Message {
 }
 
 const starters = [
-  "What projects has he built?",
-  "What's his tech stack?",
-  "Show me his resume",
-  "How can I contact him?"
+  "What projects have you built?",
+  "What's your tech stack?",
+  "How can I contact you?"
 ];
 
 export function ChatBot() {
@@ -22,7 +23,7 @@ export function ChatBot() {
     {
       role: "assistant",
       content:
-        "Hey! I'm an AI assistant trained on Onkar's portfolio. Ask me anything about his projects, skills, or background."
+        "Hey! I'm an AI version of Onkar. Ask me anything about my projects, skills, or background."
     }
   ]);
   const [input, setInput] = useState("");
@@ -63,6 +64,7 @@ export function ChatBot() {
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let assistantContent = "";
+      let buffer = "";
 
       setMessages(prev => [
         ...prev,
@@ -72,22 +74,28 @@ export function ChatBot() {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value);
-        const lines = chunk.split("\n").filter(l => l.startsWith("data: "));
+        buffer += decoder.decode(value, { stream: true });
+        
+        const lines = buffer.split("\n");
+        // Keep the last incomplete line in the buffer
+        buffer = lines.pop() || "";
+        
         for (const line of lines) {
-          const data = line.slice(6);
-          if (data === "[DONE]") break;
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.text) {
-              assistantContent += parsed.text;
-              setMessages(prev => [
-                ...prev.slice(0, -1),
-                { role: "assistant", content: assistantContent }
-              ]);
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6);
+            if (data === "[DONE]") break;
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.text) {
+                assistantContent += parsed.text;
+                setMessages(prev => [
+                  ...prev.slice(0, -1),
+                  { role: "assistant", content: assistantContent }
+                ]);
+              }
+            } catch {
+              // ignore parse errors
             }
-          } catch {
-            // ignore parse errors
           }
         }
       }
@@ -113,7 +121,7 @@ export function ChatBot() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1, type: "spring" }}
         onClick={() => setOpen(true)}
-        title="Ask anything about Onkar"
+        title="Ask anything about my portfolio"
         style={{
           position: "fixed",
           bottom: "2rem",
@@ -186,7 +194,7 @@ export function ChatBot() {
                     color: "var(--text-primary)"
                   }}
                 >
-                  AI Assistant · Onkar&apos;s Portfolio
+                  AI Onkar
                 </span>
                 <span
                   className="live-dot"
@@ -242,22 +250,45 @@ export function ChatBot() {
                       background:
                         msg.role === "user"
                           ? "rgba(0,212,255,0.15)"
-                          : "rgba(255,255,255,0.04)",
+                          : "rgba(124, 58, 237, 0.08)",
                       border:
                         msg.role === "user"
                           ? "1px solid rgba(0,212,255,0.25)"
-                          : "1px solid var(--border)",
+                          : "1px solid rgba(124, 58, 237, 0.2)",
                       fontFamily: "var(--font-body)",
                       fontSize: "13px",
                       lineHeight: 1.6,
                       color:
                         msg.role === "user"
                           ? "var(--accent-primary)"
-                          : "var(--text-primary)",
-                      whiteSpace: "pre-wrap"
+                          : "rgba(255, 255, 255, 0.9)",
+                      whiteSpace: msg.role === "user" ? "pre-wrap" : "normal"
                     }}
                   >
-                    {msg.content || (
+                    {msg.content ? (
+                      msg.role === "user" ? (
+                        msg.content
+                      ) : (
+                        <div className="markdown-body">
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              p: ({ node, ...props }) => <p style={{ margin: "0 0 8px 0", whiteSpace: "pre-wrap" }} {...props} />,
+                              ul: ({ node, ...props }) => <ul style={{ margin: "0 0 8px 0", paddingLeft: "20px" }} {...props} />,
+                              ol: ({ node, ...props }) => <ol style={{ margin: "0 0 8px 0", paddingLeft: "20px" }} {...props} />,
+                              li: ({ node, ...props }) => <li style={{ marginBottom: "4px" }} {...props} />,
+                              a: ({ node, ...props }) => <a target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-primary)", textDecoration: "underline", wordBreak: "break-all" }} {...props} />,
+                              strong: ({ node, ...props }) => <strong style={{ color: "var(--accent-secondary)", fontWeight: 600 }} {...props} />,
+                              h1: ({ node, ...props }) => <h1 style={{ fontSize: "1.1em", fontWeight: 700, margin: "12px 0 8px 0", color: "var(--accent-tertiary)" }} {...props} />,
+                              h2: ({ node, ...props }) => <h2 style={{ fontSize: "1.05em", fontWeight: 600, margin: "10px 0 6px 0", color: "var(--accent-tertiary)" }} {...props} />,
+                              h3: ({ node, ...props }) => <h3 style={{ fontSize: "1em", fontWeight: 600, margin: "8px 0 4px 0" }} {...props} />,
+                            }}
+                          >
+                            {msg.content}
+                          </ReactMarkdown>
+                        </div>
+                      )
+                    ) : (
                       <span style={{ opacity: 0.5 }}>
                         <span className="blink-cursor" />
                       </span>
@@ -327,7 +358,7 @@ export function ChatBot() {
                     sendMessage(input);
                   }
                 }}
-                placeholder="Ask about projects, skills, background..."
+                placeholder="Ask about my projects, skills, background..."
                 style={{
                   flex: 1,
                   background: "rgba(255,255,255,0.04)",

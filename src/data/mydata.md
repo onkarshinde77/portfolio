@@ -161,67 +161,9 @@ An autonomous collision detection and avoidance robot built from scratch using A
 ### Status
 Completed
 
-### GitHub Link
-https://github.com/onkarshinde77
-
 ---
 
 ## Project 4
-
-### Project Name
-RAG Document Q&A System
-
-### Description
-A retrieval-augmented generation pipeline for intelligent document question answering. Users upload PDF documents which are chunked, embedded with HuggingFace sentence-transformers, and stored in FAISS. Groq LLaMA 3 generates grounded answers with source citations. Achieves 87% faithfulness score.
-
-### Technologies Used
-- HuggingFace Sentence-Transformers
-- FAISS
-- Groq (LLaMA 3)
-- Python
-- LangChain
-
-### Features
-- PDF upload and chunking
-- Grounded answers with source citations
-- 87% faithfulness score
-
-### Status
-Completed
-
-### GitHub Link
-https://github.com/onkarshinde77/rag-document-qna
-
----
-
-## Project 5
-
-### Project Name
-NLP Sentiment Analysis Pipeline
-
-### Description
-Multi-class sentiment classifier (Positive/Negative/Neutral) achieving 92% macro-F1 on Twitter data. Uses BiLSTM model with TF-IDF and sentence embeddings. Benchmarked against Naïve Bayes, Logistic Regression, and SVM baselines. Custom text cleaning pipeline for social media noise.
-
-### Technologies Used
-- BiLSTM
-- TF-IDF
-- Sentence Embeddings
-- Python
-
-### Features
-- Multi-class sentiment classifier
-- Custom text cleaning for social media noise
-- 92% macro-F1 on Twitter data
-
-### Status
-Completed
-
-### GitHub Link
-https://github.com/onkarshinde77/sentiment-analysis
-
----
-
-## Project 6
 
 ### Project Name
 Data Analytics Platform
@@ -245,34 +187,7 @@ An interactive EDA and visualization platform for structured datasets. Auto-gene
 Completed
 
 ### GitHub Link
-https://github.com/onkarshinde77/data-analytics-platform
-
----
-
-## Project 7
-
-### Project Name
-AI-Powered Civic Issue Reporter
-
-### Description
-A full-stack civic complaint platform with AI image validation. Uses Roboflow YOLOv8 for object detection and Groq LLaMA 3 for civic-issue classification to reject invalid images (humans, pets) before submission. Built with MERN stack (MongoDB, Express, React, Node.js) and Multer for file handling. 91% validation accuracy.
-
-### Technologies Used
-- Roboflow YOLOv8
-- Groq (LLaMA 3)
-- MERN Stack (MongoDB, Express, React, Node.js)
-- Multer
-
-### Features
-- AI image validation to reject invalid images
-- Civic-issue classification
-- 91% validation accuracy
-
-### Status
-Completed
-
-### GitHub Link
-https://github.com/onkarshinde77/civic-issue-reporter
+https://github.com/onkarshinde77/Chat-Analysis
 
 ---
 
