@@ -253,7 +253,8 @@ export function ChatBot() {
                       color:
                         msg.role === "user"
                           ? "var(--accent-primary)"
-                          : "var(--text-primary)"
+                          : "var(--text-primary)",
+                      whiteSpace: "pre-wrap"
                     }}
                   >
                     {msg.content || (
