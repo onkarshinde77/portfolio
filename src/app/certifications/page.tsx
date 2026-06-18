@@ -75,6 +75,7 @@ function Lightbox({ src, onClose }: { src: string; onClose: () => void }) {
 
 const certificates = [
   { file: "35.png", name: "Achievement Certificate", type: "image", platform: "Verified Credential" },
+  { file: "ML_Certificate.jpg", name: "Machine Learning Certificate", type: "image", platform: "Verified Credential" },
   { file: "AIDS DYPCOE.jpg", name: "AIDS DYPCOE", type: "image", platform: "Institution" },
   { file: "Onkar Shinde_certificate (1).png", name: "Machine Learning / AI", type: "image", platform: "Verified Credential" },
   { file: "Onkar_Appasahaheb_Shinde.png", name: "Python / Data Science", type: "image", platform: "Verified Credential" },
