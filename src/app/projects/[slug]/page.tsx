@@ -8,6 +8,17 @@ import Image from "next/image";
 import { getProjectBySlug, type EvalResults } from "@/data/projects";
 import s from "./page.module.css";
 
+/* ─── label map for metric keys ─── */
+const METRIC_LABELS: Record<string, string> = {
+  accuracy: "Accuracy",
+  precision: "Precision",
+  recall: "Recall",
+  f1: "F1-Score",
+  rocAuc: "ROC AUC",
+  faithfulness: "Faithfulness",
+  relevancy: "Relevancy",
+};
+
 /* ─── helpers ─── */
 function scoreColor(n: number) {
   return n >= 85 ? "var(--accent-tertiary)" : n >= 70 ? "#f59e0b" : "#ef4444";
@@ -22,7 +33,7 @@ function Metrics({ results }: { results: EvalResults }) {
         {nums.map(([k, v]) => (
           <motion.div key={k} className={s.metricBox} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.4 }}>
             <div className={s.metricNum} style={{ color: scoreColor(v) }}>{v}%</div>
-            <div className={s.metricKey}>{k}</div>
+            <div className={s.metricKey}>{METRIC_LABELS[k] ?? k}</div>
           </motion.div>
         ))}
       </div>
@@ -33,6 +44,87 @@ function Metrics({ results }: { results: EvalResults }) {
         </div>
       )}
     </div>
+  );
+}
+
+/* ─── Evaluation Charts ─── */
+function EvaluationCharts({ evaluationImages }: { evaluationImages: { confusionMatrix?: string; rocCurve?: string; trainingHistory?: string } }) {
+  const topCharts = [
+    { key: "confusionMatrix", label: "Confusion Matrix", src: evaluationImages.confusionMatrix },
+    { key: "rocCurve", label: "ROC Curve (AUC = 0.9987)", src: evaluationImages.rocCurve },
+  ].filter(c => !!c.src);
+
+  const hasTraining = !!evaluationImages.trainingHistory;
+  if (topCharts.length === 0 && !hasTraining) return null;
+
+  return (
+    <motion.div
+      className={s.card}
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: 0.22 }}
+    >
+      <div className={s.cardTitle}>Model Evaluation Reports</div>
+
+      {/* Confusion Matrix + ROC Curve side-by-side */}
+      {topCharts.length > 0 && (
+        <div style={{ display: "grid", gridTemplateColumns: topCharts.length === 2 ? "repeat(2, 1fr)" : "1fr", gap: "1rem" }}>
+          {topCharts.map(({ key, label, src }) => (
+            <div key={key} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  aspectRatio: "1 / 1",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(0,212,255,0.12)"
+                }}
+              >
+                <Image
+                  src={src!}
+                  alt={label}
+                  fill
+                  style={{ objectFit: "contain", padding: "8px" }}
+                />
+              </div>
+              <div style={{ fontFamily: "var(--font-code)", fontSize: "11px", color: "var(--text-muted)", textAlign: "center", letterSpacing: "0.05em" }}>
+                {label}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Training History — full width below */}
+      {hasTraining && (
+        <div style={{ marginTop: topCharts.length > 0 ? "1rem" : 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              aspectRatio: "16/9",
+              borderRadius: "10px",
+              overflow: "hidden",
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(0,212,255,0.12)"
+            }}
+          >
+            <Image
+              src={evaluationImages.trainingHistory!}
+              alt="Training History"
+              fill
+              style={{ objectFit: "contain", padding: "8px" }}
+            />
+          </div>
+          <div style={{ fontFamily: "var(--font-code)", fontSize: "11px", color: "var(--text-muted)", textAlign: "center", letterSpacing: "0.05em" }}>
+            Training History
+          </div>
+        </div>
+      )}
+    </motion.div>
   );
 }
 
@@ -203,6 +295,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ slug: 
               <div className={s.cardTitle}>Evaluation Metrics</div>
               <Metrics results={p.evalResults} />
             </motion.div>
+
+            {/* Evaluation Charts (confusion matrix, ROC curve, training history) */}
+            {p.evaluationImages && (
+              <EvaluationCharts evaluationImages={p.evaluationImages} />
+            )}
 
             {/* Failure Analysis */}
             <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.25 }}>

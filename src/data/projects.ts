@@ -6,6 +6,7 @@ export interface EvalResults {
   f1?: number;
   precision?: number;
   recall?: number;
+  rocAuc?: number;
 }
 
 export interface Project {
@@ -33,9 +34,112 @@ export interface Project {
   category: string;
   images?: string[];
   localVideo?: string;
+  evaluationImages?: {
+    confusionMatrix?: string;
+    rocCurve?: string;
+    trainingHistory?: string;
+  };
 }
 
 export const projects: Project[] = [
+  {
+    slug: "deepfake-video-detection",
+    name: "DeepScan — Deepfake Video Detection",
+    tagline: "End-to-end deepfake detection system combining EfficientNet-B4 + Transformer Encoder with temporal attention — 98% accuracy, 99.87% ROC AUC on 300-video hold-out test set",
+    description: `DeepScan is a complete end-to-end deepfake detection solution for both research and production. It converts raw video into a forensic prediction by combining a video processing pipeline that extracts frames and crops faces, a hybrid spatio-temporal deep learning model, and a FastAPI backend + React frontend dashboard for upload, prediction, explainability, and results tracking.
+
+The system accepts a video upload, detects and crops faces using InsightFace (buffalo_l), extracts spatial features using EfficientNet-B4, and models temporal relationships across frames with a Transformer Encoder. Temporal attention is used to identify the most influential frames, producing a final REAL / DEEPFAKE prediction with confidence scores.
+
+The production inference pipeline samples 32 frames uniformly, detects faces with InsightFace, builds the input tensor, and runs forward_with_attention() to get logits and temporal attention weights. The top 5 most influential frames are extracted for explainability, with frame-level scores and timestamps surfaced in the UI. The model was rigorously tested on a hold-out test dataset of 300 videos (150 Real, 150 Deepfake).`,
+    tech: ["PyTorch", "EfficientNet-B4", "Transformer Encoder", "InsightFace", "FastAPI", "React", "Python", "timm", "AdamW", "CosineAnnealingLR"],
+    demoVideo: "",
+    github: "https://github.com/onkarshinde77",
+    complexity: 3,
+    isResearch: true,
+    highlights: [
+      "Hybrid spatio-temporal model: EfficientNet-B4 backbone + 6-layer Transformer Encoder with 8 attention heads",
+      "98.00% accuracy / 99.87% ROC AUC on a 300-video hold-out test set",
+      "Temporal attention mechanism identifies and ranks the most influential frames per video",
+      "InsightFace buffalo_l face detection with automatic largest-face selection per frame",
+      "FastAPI backend + React frontend with explainability dashboard and prediction history",
+      "Mixed-precision training (GradScaler) + CosineAnnealingLR scheduling + gradient clipping",
+      "Full checkpoint/resume support — saves model, optimizer, scheduler, scaler, and training history",
+      "Detailed logging per pipeline stage for debugging, reproducibility, and production observability"
+    ],
+    architectureDiagram: `Video Input
+    │
+    ▼
+┌─────────────────────────────┐
+│  Frame Extraction (32 fps)  │  ← Uniform sampling
+└──────────────┬──────────────┘
+               │
+    ▼
+┌─────────────────────────────┐
+│ InsightFace (buffalo_l)     │  ← Face detection & crop
+└──────────────┬──────────────┘
+               │  380×380 face crops
+    ▼
+┌─────────────────────────────┐
+│ EfficientNet-B4 Backbone    │  ← 1792-dim spatial features/frame
+└──────────────┬──────────────┘
+               │  Project → 512-dim
+    ▼
+┌─────────────────────────────┐
+│ Transformer Encoder (6L×8H) │  ← Sinusoidal positional encoding
+└──────────────┬──────────────┘
+               │
+    ▼
+┌─────────────────────────────┐
+│ Temporal Attention MLP      │  ← Frame importance weights
+└──────────────┬──────────────┘
+               │  Weighted aggregation
+    ▼
+┌─────────────────────────────┐
+│ Classifier Head             │  ← BN → ReLU → Dropout → Linear
+└──────────────┬──────────────┘
+               │
+    ▼
+  REAL / DEEPFAKE + Confidence`,
+    architecture: "Video → Frame Extraction (32 frames) → InsightFace Face Crop → EfficientNet-B4 (1792-dim) → Linear Projection (512-dim) → Transformer Encoder (6 layers, 8 heads) → Temporal Attention → Weighted Aggregation → Classifier Head → REAL/DEEPFAKE",
+    evalResults: {
+      accuracy: 98,
+      precision: 98.65,
+      recall: 97.33,
+      f1: 97.99,
+      rocAuc: 99.87
+    },
+    failureCases: [
+      "Low-quality or very short videos with fewer than 32 detectable faces — mitigated by padding sequences with the final valid face crop",
+      "Deepfakes with minimal facial movement across frames — temporal attention spreads weights too uniformly, reducing interpretability",
+      "Extreme head angles or heavy occlusion confuse InsightFace face detection — addressed by falling back to the full frame when no face is found"
+    ],
+    whatILearned: [
+      "Hybrid Spatio-Temporal Modeling — designing a two-stage architecture that combines CNN spatial feature extraction with Transformer temporal modeling",
+      "Temporal Attention — implementing a learnable attention mechanism to assign importance weights across a frame sequence for both prediction and explainability",
+      "Transfer Learning at Scale — loading EfficientNet-B4 ImageNet weights via timm and fine-tuning only the final 25% of parameters",
+      "Mixed Precision Training — using GradScaler and autocast for efficient GPU utilization and stable training",
+      "Robust Training Pipeline — CosineAnnealingLR scheduling, gradient clipping, early stopping, and full checkpoint/resume support",
+      "Production ML System Design — FastAPI + React integration, logging per pipeline stage, explainability surfacing in the UI"
+    ],
+    stats: {
+      latency: "< 2s/video",
+      evalScore: "98% accuracy",
+      datasetSize: "300 videos",
+      costPerCall: "On-device"
+    },
+    category: "Computer Vision",
+    images: [
+      "/projects/Deepfake_video_detection/frontend.png",
+      "/projects/Deepfake_video_detection/training_image.png",
+      "/projects/Deepfake_video_detection/confusion_matrix.png",
+      "/projects/Deepfake_video_detection/roc_curve.png"
+    ],
+    evaluationImages: {
+      confusionMatrix: "/projects/Deepfake_video_detection/confusion_matrix.png",
+      rocCurve: "/projects/Deepfake_video_detection/roc_curve.png",
+      trainingHistory: "/projects/Deepfake_video_detection/training_image.png"
+    }
+  },
   {
     slug: "blog-writing-agent",
     name: "AI Blog Writing Agent",
